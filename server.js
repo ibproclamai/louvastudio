@@ -12,7 +12,12 @@ const songsRoutes = require('./src/routes/songs');
 const schedulesRoutes = require('./src/routes/schedules');
 const confirmationsRoutes = require('./src/routes/confirmations');
 const vsRoutes = require('./src/routes/vs');
+const multitrackRoutes = require('./src/routes/multitracks');
 const configRoutes = require('./src/routes/config');
+const reportsRoutes = require('./src/routes/reports');
+const eventsRoutes = require('./src/routes/events');
+const chatRoutes = require('./src/routes/chat');
+const notificationsRoutes = require('./src/routes/notifications');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -78,7 +83,12 @@ app.use('/api/songs', songsRoutes);
 app.use('/api/schedules', schedulesRoutes);
 app.use('/api/confirmations', confirmationsRoutes);
 app.use('/api/vs', vsRoutes);
+app.use('/api/multitracks', multitrackRoutes);
 app.use('/api/config', configRoutes);
+app.use('/api/reports', reportsRoutes);
+app.use('/api/events', eventsRoutes);
+app.use('/api/chat', chatRoutes);
+app.use('/api/notifications', notificationsRoutes);
 
 app.get('/', (req, res) => {
   const s = checkSetup();

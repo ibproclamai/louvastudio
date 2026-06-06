@@ -14,6 +14,8 @@ echo   [2] Configurar arquivo .env
 echo   [3] Iniciar o servidor
 echo   [4] Gerar variaveis para deploy online
 echo   [5] Preparar pacote para deploy (ZIP pronto)
+echo   [6] Ver credenciais em linha unica (para Render)
+echo   [7] Abrir credencial no Bloco de Notas (copia facil)
 echo   [0] Sair
 echo.
 set /p op="  Escolha uma opcao: "
@@ -23,6 +25,8 @@ if "%op%"=="2" goto config
 if "%op%"=="3" goto start
 if "%op%"=="4" goto genenv
 if "%op%"=="5" goto zip
+if "%op%"=="6" goto single
+if "%op%"=="7" goto opencred
 if "%op%"=="0" exit /b
 
 goto menu
@@ -109,4 +113,20 @@ echo.
 echo  Preparando pacote para deploy online (GitHub + Render)...
 echo.
 powershell -ExecutionPolicy Bypass -File "scripts\deploy.ps1"
+goto menu
+
+:single
+cls
+echo.
+call node scripts/gerar-credenciais-render.js
+echo.
+pause
+goto menu
+
+:opencred
+cls
+echo.
+call node scripts/abrir-credencial.js
+echo.
+pause
 goto menu

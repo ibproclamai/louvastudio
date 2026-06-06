@@ -16,7 +16,7 @@ function rowsToObjects(rows) {
   });
 }
 
-const TIPOS_VALIDOS = ['playback', 'stem', 'metronomo', 'click', 'ensaio', 'guia', 'outro'];
+const TIPOS_VALIDOS = ['playback', 'stem', 'metronomo', 'click', 'ensaio', 'guia', 'multitrack', 'outro'];
 
 router.get('/', authRequired, async (req, res, next) => {
   try {

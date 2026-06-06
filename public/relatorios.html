@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Relatorios - Louva.Studio</title>
+  <meta name="theme-color" content="#6366f1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" type="image/svg+xml" href="/icon.svg">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/relatorios.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-brand">Louva.Studio</div>
+    <button class="nav-toggle" id="nav-toggle" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="nav-menu" id="nav-menu">
+      <ul class="nav-links">
+        <li><a href="/dashboard.html">Inicio</a></li>
+        <li><a href="/members.html">Membros</a></li>
+        <li><a href="/songs.html">Musicas</a></li>
+        <li><a href="/schedules.html">Escalas</a></li>
+        <li><a href="/my-schedule.html">Minhas Escalas</a></li>
+        <li class="admin-only hidden"><a href="/studio.html">Estudio</a></li>
+        <li class="admin-only hidden"><a href="/relatorios.html" class="active">Relatorios</a></li>
+      </ul>
+      <div class="nav-user">
+        <span id="user-name" class="user-chip"></span>
+        <button id="btn-logout" class="btn btn-sm">Sair</button>
+      </div>
+    </div>
+  </nav>
+  <div id="nav-overlay" class="nav-overlay"></div>
+
+  <main class="container">
+    <div class="page-header">
+      <h1>Relatorios</h1>
+      <button id="btn-refresh" class="btn btn-sm">&#8635; Atualizar</button>
+    </div>
+    <p class="subtitle">Visao geral do ministerio de louvor</p>
+
+    <section class="kpi-grid">
+      <div class="kpi-card kpi-primary">
+        <div class="kpi-icon">&#128101;</div>
+        <div class="kpi-info">
+          <div class="kpi-value" id="kpi-membros">-</div>
+          <div class="kpi-label">Membros ativos</div>
+        </div>
+      </div>
+      <div class="kpi-card kpi-success">
+        <div class="kpi-icon">&#127911;</div>
+        <div class="kpi-info">
+          <div class="kpi-value" id="kpi-musicas">-</div>
+          <div class="kpi-label">Musicas no catalogo</div>
+        </div>
+      </div>
+      <div class="kpi-card kpi-warning">
+        <div class="kpi-icon">&#128197;</div>
+        <div class="kpi-info">
+          <div class="kpi-value" id="kpi-escalas">-</div>
+          <div class="kpi-label">Escalas (publicadas)</div>
+        </div>
+      </div>
+      <div class="kpi-card kpi-accent">
+        <div class="kpi-icon">&#9989;</div>
+        <div class="kpi-info">
+          <div class="kpi-value" id="kpi-taxa">-</div>
+          <div class="kpi-label">Taxa de confirmacao</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="charts-grid">
+      <div class="card chart-card">
+        <h3>&#128200; Escalas por mes</h3>
+        <div class="chart-wrap"><canvas id="chart-schedules"></canvas></div>
+      </div>
+      <div class="card chart-card">
+        <h3>&#9989; Status das confirmacoes</h3>
+        <div class="chart-wrap"><canvas id="chart-confirmations"></canvas></div>
+      </div>
+      <div class="card chart-card">
+        <h3>&#127911; Top 10 musicas mais tocadas</h3>
+        <div class="chart-wrap"><canvas id="chart-top-songs"></canvas></div>
+      </div>
+      <div class="card chart-card">
+        <h3>&#128101; Membros por funcao</h3>
+        <div class="chart-wrap"><canvas id="chart-functions"></canvas></div>
+      </div>
+    </section>
+
+    <section class="tables-grid">
+      <div class="card">
+        <h3>&#11088; Top 10 musicas mais escaladas</h3>
+        <div class="table-wrap">
+          <table class="data-table" id="table-top-songs">
+            <thead>
+              <tr><th>#</th><th>Musica</th><th>Artista</th><th>Tom</th><th>Vezes</th></tr>
+            </thead>
+            <tbody><tr><td colspan="5" class="empty">Carregando...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>&#127942; Top 10 membros mais ativos</h3>
+        <div class="table-wrap">
+          <table class="data-table" id="table-top-members">
+            <thead>
+              <tr><th>#</th><th>Membro</th><th>Funcao</th><th>Escalas</th><th>Confirm.</th><th>Taxa</th></tr>
+            </thead>
+            <tbody><tr><td colspan="6" class="empty">Carregando...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h3>&#9200; Confirmacoes pendentes</h3>
+      <div class="table-wrap">
+        <table class="data-table" id="table-pending">
+          <thead>
+            <tr><th>Data do culto</th><th>Tipo</th><th>Membro</th><th>Funcao na escala</th></tr>
+          </thead>
+          <tbody><tr><td colspan="4" class="empty">Carregando...</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+
+    <div id="report-error" class="card hidden" style="border-color: var(--danger); color: var(--danger);">
+      <p>Erro ao carregar relatorios. Tente atualizar.</p>
+    </div>
+  </main>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/relatorios.js"></script>
+</body>
+</html>

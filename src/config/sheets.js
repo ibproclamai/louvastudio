@@ -119,6 +119,10 @@ async function ensureTabs() {
     { name: 'EscalaMembros', headers: ['id', 'escala_id', 'membro_id', 'funcao_na_escala', 'confirmado'] },
     { name: 'EscalaMusicas', headers: ['id', 'escala_id', 'musica_id', 'ordem', 'vs_id'] },
     { name: 'VS', headers: ['id', 'musica_id', 'nome', 'tipo', 'url', 'tom', 'bpm', 'descricao', 'criado_em'] },
+    { name: 'MultitrackTracks', headers: ['id', 'vs_id', 'ordem', 'instrumento', 'label', 'url', 'volume_padrao', 'mutado_padrao', 'criado_em'] },
+    { name: 'Eventos', headers: ['id', 'data', 'hora_inicio', 'hora_fim', 'tipo', 'titulo', 'local', 'descricao', 'cor', 'criado_por', 'criado_em'] },
+    { name: 'EventoParticipantes', headers: ['id', 'evento_id', 'membro_id', 'funcao', 'confirmado'] },
+    { name: 'ChatMessages', headers: ['id', 'remetente_id', 'canal', 'mensagem', 'criado_em'] },
     { name: 'Config', headers: ['chave', 'valor', 'atualizado_em'] }
   ];
 

@@ -28,6 +28,9 @@
         <li><a href="/schedules.html">Escalas</a></li>
         <li><a href="/my-schedule.html">Minhas Escalas</a></li>
         <li class="admin-only hidden"><a href="/studio.html" class="active">Estudio</a></li>
+        <li><a href="/eventos.html">Eventos</a></li>
+        <li><a href="/chat.html">Chat</a></li>
+        <li class="admin-only"><a href="/relatorios.html">Relatorios</a></li>
       </ul>
       <div class="nav-user">
         <span id="user-name" class="user-chip"></span>
@@ -46,6 +49,7 @@
 
     <div class="studio-tabs">
       <button class="studio-tab active" data-stab="vs">Virtual Sound (VS)</button>
+      <button class="studio-tab" data-stab="multitrack">Multitracks</button>
       <button class="studio-tab" data-stab="config">Configuracoes da Igreja</button>
       <button class="studio-tab" data-stab="users">Usuarios</button>
     </div>
@@ -74,6 +78,28 @@
       </div>
 
       <div id="vs-list" class="card-grid">
+        <p class="empty">Carregando...</p>
+      </div>
+    </section>
+
+    <section id="panel-multitrack" class="studio-panel hidden">
+      <div class="page-header">
+        <h2>Multitracks (stems por instrumento)</h2>
+        <button id="btn-new-multitrack" class="btn btn-primary">+ Novo multitrack</button>
+      </div>
+
+      <div class="filters filters-row">
+        <input type="text" id="search-multitrack" placeholder="Buscar por nome...">
+        <select id="filter-multitrack-song">
+          <option value="">Todas as musicas</option>
+        </select>
+      </div>
+
+      <div class="info-box" style="background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.3);border-radius:var(--radius);padding:1rem;margin-bottom:1rem;">
+        <p style="margin:0;font-size:0.9rem;"><strong>&#127911; Como funciona:</strong> Crie um multitrack para uma musica e adicione varias faixas (voz, violao, guitarra, baixo, teclado, bateria, click). No dia do culto, cada musico abre o player no celular e muta o proprio instrumento para tocar junto com a banda.</p>
+      </div>
+
+      <div id="multitrack-list" class="card-grid">
         <p class="empty">Carregando...</p>
       </div>
     </section>
@@ -122,6 +148,54 @@
         <label>Mensagem do rodape das escalas
           <textarea name="mensagem_rodape" rows="2"></textarea>
         </label>
+
+        <h3 style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border-strong);">&#9729; Cloudinary (Upload de arquivos)</h3>
+        <div class="info-box" style="background:rgba(6,182,212,0.1);border:1px solid rgba(6,182,212,0.3);border-radius:var(--radius);padding:0.75rem;margin-bottom:1rem;">
+          <p style="margin:0 0 0.5rem;font-size:0.85rem;"><strong>Por que?</strong> Para que musicos possam enviar playbacks e stems diretamente pelo app.</p>
+          <p style="margin:0;font-size:0.8rem;color:var(--text-muted);">Crie uma conta gratis em <a href="https://cloudinary.com" target="_blank" style="color:var(--primary)">cloudinary.com</a> (25GB gratis). Va em Settings > Upload > Add upload preset > Signing Mode: <strong>Unsigned</strong>. Depois cole o Cloud Name e o nome do preset aqui.</p>
+        </div>
+        <div class="form-row">
+          <label>Cloud Name
+            <input type="text" name="cloudinary_cloud_name" placeholder="seu-cloud-name">
+          </label>
+          <label>Upload Preset
+            <input type="text" name="cloudinary_upload_preset" placeholder="louva_uploads">
+          </label>
+        </div>
+
+        <h3 style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border-strong);">&#9993; Email (Notificacoes de escala)</h3>
+        <div class="info-box" style="background:rgba(236,72,153,0.1);border:1px solid rgba(236,72,153,0.3);border-radius:var(--radius);padding:0.75rem;margin-bottom:1rem;">
+          <p style="margin:0 0 0.5rem;font-size:0.85rem;"><strong>Para que?</strong> Ao publicar uma escala, os musicos recebem um email automatico com data, horario, equipe e repertorio.</p>
+          <p style="margin:0;font-size:0.8rem;color:var(--text-muted);">Recomendado: Gmail. Va em <a href="https://myaccount.google.com/apppasswords" target="_blank" style="color:var(--primary)">Conta Google > Senhas de app</a>, gere uma senha para "Outro app" e cole abaixo. Use <code style="background:rgba(0,0,0,0.05);padding:0.1rem 0.3rem;border-radius:3px">smtp.gmail.com</code> como servidor e porta <code style="background:rgba(0,0,0,0.05);padding:0.1rem 0.3rem;border-radius:3px">587</code>.</p>
+        </div>
+        <div class="form-row">
+          <label>Servidor SMTP
+            <input type="text" name="email_host" placeholder="smtp.gmail.com">
+          </label>
+          <label>Porta
+            <input type="number" name="email_port" placeholder="587">
+          </label>
+        </div>
+        <div class="form-row">
+          <label>Usuario (email)
+            <input type="email" name="email_user" placeholder="sua-igreja@gmail.com">
+          </label>
+          <label>Senha de app
+            <input type="password" name="email_pass" placeholder="xxxx xxxx xxxx xxxx">
+          </label>
+        </div>
+        <div class="form-row">
+          <label>Nome do remetente
+            <input type="text" name="email_from_name" placeholder="Louva.Studio">
+          </label>
+        </div>
+        <div class="form-row" style="align-items:flex-end">
+          <label style="flex:1">Email para teste
+            <input type="email" id="test-email-input" placeholder="seu-email@exemplo.com">
+          </label>
+          <button type="button" id="btn-test-email" class="btn btn-ghost">Enviar teste</button>
+        </div>
+
         <div class="form-actions">
           <button type="submit" class="btn btn-primary">Salvar configuracoes</button>
         </div>
@@ -137,6 +211,93 @@
       </div>
     </section>
   </main>
+
+  <div id="modal-multitrack" class="modal hidden">
+    <div class="modal-content modal-large">
+      <div class="modal-header">
+        <h2 id="modal-multitrack-title">Novo multitrack</h2>
+        <button class="modal-close" data-close>&times;</button>
+      </div>
+      <form id="form-multitrack" class="form">
+        <input type="hidden" name="id">
+        <label>Musica *
+          <select name="musica_id" required>
+            <option value="">Selecione a musica...</option>
+          </select>
+        </label>
+        <label>Nome do multitrack *
+          <input type="text" name="nome" required placeholder="Ex: Stems oficiais, Backing track por faixas...">
+        </label>
+        <label>Descricao
+          <textarea name="descricao" rows="2" placeholder="Informacoes sobre o multitrack..."></textarea>
+        </label>
+        <div class="form-actions">
+          <button type="button" class="btn" data-close>Cancelar</button>
+          <button type="submit" class="btn btn-primary">Salvar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="modal-tracks" class="modal hidden">
+    <div class="modal-content modal-large">
+      <div class="modal-header">
+        <h2 id="modal-tracks-title">Faixas do multitrack</h2>
+        <button class="modal-close" data-close>&times;</button>
+      </div>
+      <div class="info-box" style="background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.3);border-radius:var(--radius);padding:0.75rem;margin-bottom:1rem;">
+        <p style="margin:0;font-size:0.85rem;"><strong>&#9888;&#65039; Como obter as URLs:</strong> suba os stems para Google Drive, Dropbox ou similar, e use links diretos. Formatos aceitos: .mp3, .ogg, .wav, .m4a</p>
+      </div>
+      <form id="form-track" class="form">
+        <input type="hidden" name="vs_id">
+        <div class="form-row">
+          <label>Instrumento *
+            <select name="instrumento" required>
+              <option value="click">🥁 Click</option>
+              <option value="voz">🎤 Voz</option>
+              <option value="violao">🎸 Violao</option>
+              <option value="guitarra">🎸 Guitarra</option>
+              <option value="baixo">🎸 Baixo</option>
+              <option value="teclado">🎹 Teclado</option>
+              <option value="bateria">🥁 Bateria</option>
+              <option value="metronomo">⏱️ Metronomo</option>
+              <option value="outro">🎵 Outro</option>
+            </select>
+          </label>
+          <label>Rotulo
+            <input type="text" name="label" placeholder="Ex: Voz principal, Bateria completa">
+          </label>
+        </div>
+        <div class="field-with-upload">
+          <label>URL do audio *
+            <input type="url" name="url" id="track-url" required placeholder="https://...mp3 ou faca upload">
+          </label>
+          <div id="upload-track-zone"></div>
+        </div>
+        <div class="form-row">
+          <label>Volume padrao (0-100)
+            <input type="number" name="volume_padrao" min="0" max="100" value="80">
+          </label>
+          <label>Ordem
+            <input type="number" name="ordem" min="0" value="0">
+          </label>
+        </div>
+        <label class="checkbox-label">
+          <input type="checkbox" name="mutado_padrao">
+          Iniciar mutado
+        </label>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Adicionar faixa</button>
+        </div>
+      </form>
+      <hr>
+      <h3>Faixas adicionadas</h3>
+      <div id="tracks-list" class="card-grid"></div>
+      <div class="form-actions">
+        <a id="btn-open-player" class="btn btn-primary" target="_blank">&#9654; Abrir Player</a>
+      </div>
+    </div>
+  </div>
 
   <div id="modal-vs" class="modal hidden">
     <div class="modal-content modal-large">
@@ -165,9 +326,12 @@
             <option value="outro">Outro</option>
           </select>
         </label>
-        <label>URL do audio *
-          <input type="url" name="url" required placeholder="https://drive.google.com/... ou link direto .mp3">
-        </label>
+        <div class="field-with-upload">
+          <label>URL do audio *
+            <input type="url" name="url" id="vs-url" required placeholder="https://... ou faca upload">
+          </label>
+          <div id="upload-vs-zone"></div>
+        </div>
         <div class="form-row">
           <label>Tom (se diferente)
             <input type="text" name="tom" placeholder="Ex: G, Am">

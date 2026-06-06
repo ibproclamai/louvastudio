@@ -112,6 +112,19 @@ router.put('/users/:id', authRequired, async (req, res, next) => {
   } catch (e) { next(e); }
 });
 
+router.post('/me/refresh', authRequired, async (req, res, next) => {
+  try {
+    const rows = await sheets.readSheet('Usuarios');
+    const users = rowsToObjects(rows);
+    const u = users.find(x => x.id === req.user.id);
+    if (!u) return res.status(404).json({ error: 'Usuario nao encontrado' });
+    const payload = { id: u.id, nome: u.nome, email: u.email, perfil: u.perfil };
+    const token = signToken(payload);
+    res.cookie('token', token, { httpOnly: true, sameSite: 'lax' });
+    res.json({ token, user: payload });
+  } catch (e) { next(e); }
+});
+
 router.delete('/users/:id', authRequired, async (req, res, next) => {
   try {
     if (req.user.perfil !== 'admin') return res.status(403).json({ error: 'Acesso restrito a administradores' });

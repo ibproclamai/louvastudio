@@ -108,7 +108,7 @@ router.get('/:id', authRequired, async (req, res, next) => {
   } catch (e) { next(e); }
 });
 
-router.post('/', authRequired, adminRequired, async (req, res, next) => {
+router.post('/', authRequired, async (req, res, next) => {
   try {
     const { data_culto, tipo_culto, local, observacoes, status, membros, musicas } = req.body;
     if (!data_culto) return res.status(400).json({ error: 'data_culto eh obrigatorio' });
@@ -137,7 +137,7 @@ router.post('/', authRequired, adminRequired, async (req, res, next) => {
   } catch (e) { next(e); }
 });
 
-router.put('/:id', authRequired, adminRequired, async (req, res, next) => {
+router.put('/:id', authRequired, async (req, res, next) => {
   try {
     const { id } = req.params;
     const rows = await sheets.readSheet('Escalas');
@@ -207,7 +207,7 @@ router.put('/:id', authRequired, adminRequired, async (req, res, next) => {
   } catch (e) { next(e); }
 });
 
-router.delete('/:id', authRequired, adminRequired, async (req, res, next) => {
+router.delete('/:id', authRequired, async (req, res, next) => {
   try {
     const { id } = req.params;
     const rows = await sheets.readSheet('Escalas');
@@ -227,7 +227,7 @@ router.delete('/:id', authRequired, adminRequired, async (req, res, next) => {
   } catch (e) { next(e); }
 });
 
-router.post('/:id/membros', authRequired, adminRequired, async (req, res, next) => {
+router.post('/:id/membros', authRequired, async (req, res, next) => {
   try {
     const { id } = req.params;
     const { membro_id, funcao_na_escala } = req.body;
@@ -238,7 +238,7 @@ router.post('/:id/membros', authRequired, adminRequired, async (req, res, next) 
   } catch (e) { next(e); }
 });
 
-router.delete('/:id/membros/:escalaMembroId', authRequired, adminRequired, async (req, res, next) => {
+router.delete('/:id/membros/:escalaMembroId', authRequired, async (req, res, next) => {
   try {
     const { id, escalaMembroId } = req.params;
     const rows = await sheets.readSheet('EscalaMembros');
@@ -250,7 +250,7 @@ router.delete('/:id/membros/:escalaMembroId', authRequired, adminRequired, async
   } catch (e) { next(e); }
 });
 
-router.post('/:id/musicas', authRequired, adminRequired, async (req, res, next) => {
+router.post('/:id/musicas', authRequired, async (req, res, next) => {
   try {
     const { id } = req.params;
     const { musica_id, ordem, vs_id } = req.body;
@@ -261,7 +261,7 @@ router.post('/:id/musicas', authRequired, adminRequired, async (req, res, next) 
   } catch (e) { next(e); }
 });
 
-router.delete('/:id/musicas/:escalaMusicaId', authRequired, adminRequired, async (req, res, next) => {
+router.delete('/:id/musicas/:escalaMusicaId', authRequired, async (req, res, next) => {
   try {
     const { id, escalaMusicaId } = req.params;
     const rows = await sheets.readSheet('EscalaMusicas');
@@ -273,10 +273,10 @@ router.delete('/:id/musicas/:escalaMusicaId', authRequired, adminRequired, async
   } catch (e) { next(e); }
 });
 
-router.post('/:id/publicar', authRequired, adminRequired, async (req, res, next) => {
+router.post('/:id/publicar', authRequired, async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { status } = req.body;
+    const { status, enviar_email } = req.body;
     const novoStatus = status === 'rascunho' ? 'rascunho' : 'publicada';
 
     const rows = await sheets.readSheet('Escalas');
@@ -287,11 +287,23 @@ router.post('/:id/publicar', authRequired, adminRequired, async (req, res, next)
     await sheets.updateRow('Escalas', e._rowIndex, [
       e.id, e.data_culto, e.tipo_culto, e.local, e.observacoes, novoStatus, e.criado_por, e.criado_em
     ]);
-    res.json({ ok: true, status: novoStatus });
+
+    let emailResult = null;
+    if (novoStatus === 'publicada' && enviar_email !== false) {
+      try {
+        const notifications = require('./notifications');
+        const baseUrl = (req.get('origin') || req.get('host') ? `${req.protocol}://${req.get('host')}` : '');
+        emailResult = await notifications.sendScheduleEmails(id, baseUrl);
+      } catch (e) {
+        emailResult = { sent: 0, errors: [e.message] };
+      }
+    }
+
+    res.json({ ok: true, status: novoStatus, email: emailResult });
   } catch (e) { next(e); }
 });
 
-router.put('/:id/musicas/:escalaMusicaId/vs', authRequired, adminRequired, async (req, res, next) => {
+router.put('/:id/musicas/:escalaMusicaId/vs', authRequired, async (req, res, next) => {
   try {
     const { id, escalaMusicaId } = req.params;
     const { vs_id } = req.body;

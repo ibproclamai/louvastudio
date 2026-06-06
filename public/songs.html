@@ -27,6 +27,9 @@
         <li><a href="/schedules.html">Escalas</a></li>
         <li><a href="/my-schedule.html">Minhas Escalas</a></li>
         <li class="admin-only hidden"><a href="/studio.html">Estudio</a></li>
+        <li><a href="/eventos.html">Eventos</a></li>
+        <li><a href="/chat.html">Chat</a></li>
+        <li class="admin-only"><a href="/relatorios.html">Relatorios</a></li>
       </ul>
       <div class="nav-user">
         <span id="user-name" class="user-chip"></span>
@@ -73,12 +76,17 @@
             <input type="number" name="bpm" min="0">
           </label>
         </div>
-        <label>Link da cifra
-          <input type="url" name="cifra_url" placeholder="https://...">
-        </label>
-        <label>Link do video
-          <input type="url" name="video_url" placeholder="https://...">
-        </label>
+        <div class="field-with-upload">
+          <label>Link da cifra
+            <input type="url" name="cifra_url" id="cifra-url" placeholder="https://... ou faca upload">
+          </label>
+          <div id="upload-cifra-zone"></div>
+        </div>
+        <div class="field-with-upload">
+          <label>Link do video (YouTube)
+            <input type="url" name="video_url" id="video-url" placeholder="https://... ou cole link do YouTube">
+          </label>
+        </div>
         <label>Observacoes
           <textarea name="observacoes" rows="2"></textarea>
         </label>

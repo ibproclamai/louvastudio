@@ -89,7 +89,8 @@ function renderSchedules() {
           ${s.musicas.length > 0 ? `<h4>Musicas</h4><ul>${s.musicas.map(mu =>
             `<li>${mu.ordem}. ${escapeHtml(mu.titulo || '?')} ${mu.artista ? '<small>- ' + escapeHtml(mu.artista) + '</small>' : ''}
              ${mu.tom ? '<span class="badge badge-primary">' + escapeHtml(mu.tom) + '</span>' : ''}
-             ${mu.vs ? '<span class="badge badge-' + escapeHtml(mu.vs.tipo) + '">VS: ' + escapeHtml(mu.vs.nome) + '</span>' : ''}</li>`).join('')}</ul>` : ''}
+             ${mu.vs ? '<span class="badge badge-' + escapeHtml(mu.vs.tipo) + '">VS: ' + escapeHtml(mu.vs.nome) + '</span>' : ''}
+             ${mu.vs && mu.vs.tipo === 'multitrack' ? `<a class="btn btn-sm btn-primary" style="margin-left:0.4rem" href="/multitrack.html?vs=${encodeURIComponent(mu.vs.id)}&schedule=${encodeURIComponent(s.id)}" target="_blank">&#9654; Tocar Multitrack</a>` : ''}</li>`).join('')}</ul>` : ''}
         </div>
       </div>
     `;

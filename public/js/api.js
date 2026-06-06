@@ -92,6 +92,171 @@ function escapeHtml(s) {
     .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
 
+function getYouTubeId(url) {
+  if (!url) return null;
+  const patterns = [
+    /(?:youtube\.com\/watch\?v=)([a-zA-Z0-9_-]{11})/,
+    /(?:youtu\.be\/)([a-zA-Z0-9_-]{11})/,
+    /(?:youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/,
+    /(?:youtube\.com\/shorts\/)([a-zA-Z0-9_-]{11})/,
+    /^([a-zA-Z0-9_-]{11})$/
+  ];
+  for (const p of patterns) {
+    const m = url.match(p);
+    if (m) return m[1];
+  }
+  return null;
+}
+
+function openYouTube(url) {
+  const id = getYouTubeId(url);
+  if (!id) {
+    toast('Link do YouTube invalido', 'error');
+    return;
+  }
+  const modal = document.createElement('div');
+  modal.className = 'yt-modal';
+  modal.innerHTML = `
+    <div class="yt-modal-backdrop"></div>
+    <div class="yt-modal-content">
+      <button class="yt-modal-close" aria-label="Fechar">&times;</button>
+      <iframe src="https://www.youtube.com/embed/${id}?autoplay=1&rel=0" 
+              allow="autoplay; encrypted-media" allowfullscreen
+              frameborder="0"></iframe>
+    </div>
+  `;
+  document.body.appendChild(modal);
+  document.body.style.overflow = 'hidden';
+  function close() {
+    modal.remove();
+    document.body.style.overflow = '';
+  }
+  modal.querySelector('.yt-modal-backdrop').onclick = close;
+  modal.querySelector('.yt-modal-close').onclick = close;
+  document.addEventListener('keydown', function esc(e) {
+    if (e.key === 'Escape') { close(); document.removeEventListener('keydown', esc); }
+  });
+}
+
+async function copyText(text, label = 'Link') {
+  try {
+    await navigator.clipboard.writeText(text);
+    toast(`${label} copiado!`, 'success', 2000);
+  } catch (e) {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); toast(`${label} copiado!`, 'success', 2000); }
+    catch (err) { toast('Nao foi possivel copiar', 'error'); }
+    ta.remove();
+  }
+}
+
+let cloudinaryConfig = null;
+async function getCloudinaryConfig() {
+  if (cloudinaryConfig !== null) return cloudinaryConfig;
+  try {
+    const cfg = await API.get('/config');
+    cloudinaryConfig = {
+      cloudName: cfg.cloudinary_cloud_name || '',
+      uploadPreset: cfg.cloudinary_upload_preset || ''
+    };
+  } catch (e) {
+    cloudinaryConfig = { cloudName: '', uploadPreset: '' };
+  }
+  return cloudinaryConfig;
+}
+
+async function uploadToCloudinary(file, opts = {}) {
+  const cfg = await getCloudinaryConfig();
+  if (!cfg.cloudName || !cfg.uploadPreset) {
+    throw new Error('Cloudinary nao configurado. Va em Estúdio > Configuracoes da Igreja e preencha Cloud Name e Upload Preset.');
+  }
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('upload_preset', cfg.uploadPreset);
+  if (opts.folder) formData.append('folder', opts.folder);
+  if (opts.publicId) formData.append('public_id', opts.publicId);
+
+  const xhr = new XMLHttpRequest();
+  return new Promise((resolve, reject) => {
+    xhr.open('POST', `https://api.cloudinary.com/v1_1/${cfg.cloudName}/auto/upload`);
+    xhr.upload.onprogress = (e) => {
+      if (e.lengthComputable && opts.onProgress) {
+        opts.onProgress(Math.round((e.loaded / e.total) * 100));
+      }
+    };
+    xhr.onload = () => {
+      if (xhr.status >= 200 && xhr.status < 300) {
+        try {
+          const data = JSON.parse(xhr.responseText);
+          resolve({ url: data.secure_url, publicId: data.public_id, duration: data.duration, format: data.format });
+        } catch (e) { reject(new Error('Resposta invalida do Cloudinary')); }
+      } else {
+        try {
+          const err = JSON.parse(xhr.responseText);
+          reject(new Error(err.error?.message || 'Erro no upload'));
+        } catch (e) { reject(new Error('Erro no upload: HTTP ' + xhr.status)); }
+      }
+    };
+    xhr.onerror = () => reject(new Error('Erro de rede no upload'));
+    xhr.send(formData);
+  });
+}
+
+function createUploadButton(options) {
+  const {
+    accept = '*/*',
+    label = '&#9654; Upload',
+    onUpload,
+    onProgress,
+    folder = 'louva-studio'
+  } = options;
+
+  const wrap = document.createElement('div');
+  wrap.className = 'upload-zone';
+  wrap.innerHTML = `
+    <input type="file" accept="${accept}" class="upload-input" hidden>
+    <button type="button" class="btn-upload">${label}</button>
+    <div class="upload-progress" hidden>
+      <div class="upload-progress-bar"></div>
+      <span class="upload-progress-text">0%</span>
+    </div>
+  `;
+
+  const input = wrap.querySelector('.upload-input');
+  const btn = wrap.querySelector('.btn-upload');
+  const progress = wrap.querySelector('.upload-progress');
+  const bar = wrap.querySelector('.upload-progress-bar');
+  const text = wrap.querySelector('.upload-progress-text');
+
+  btn.onclick = () => input.click();
+  input.onchange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    btn.disabled = true;
+    progress.hidden = false;
+    try {
+      const result = await uploadToCloudinary(file, {
+        folder,
+        onProgress: (p) => { bar.style.width = p + '%'; text.textContent = p + '%'; }
+      });
+      btn.textContent = '&#10003; Enviado';
+      setTimeout(() => { btn.innerHTML = label; }, 2000);
+      if (onUpload) onUpload(result, file);
+    } catch (err) {
+      toast(err.message, 'error', 5000);
+    } finally {
+      btn.disabled = false;
+      input.value = '';
+      setTimeout(() => { progress.hidden = true; bar.style.width = '0%'; text.textContent = '0%'; }, 500);
+    }
+  };
+
+  return wrap;
+}
+
 function showAlert(msg, type = 'error') {
   toast(msg, type);
 }

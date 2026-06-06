@@ -8,10 +8,13 @@
 ## O que o sistema faz
 
 - **Membros**: cadastro com funcoes (vocalista, instrumentista, etc), telefones, observacoes
-- **Musicas**: catalogo com tom, BPM, categoria, links de cifras, letras e videos
+- **Musicas**: catalogo com tom, BPM, links de cifras e videos do YouTube (com player embutido)
 - **Escalas**: montagem de escalas por data, publicacao e confirmacao
 - **Confirmacoes**: cada membro confirma (ou recusa) sua participacao na escala
 - **VS (Virtual Sound)**: cada musica pode ter varios VS - playback, stems, metronomo, click, guia
+- **Multitrack Player**: separa faixas por instrumento para musicos tocarem junto com a banda
+- **Relatorios**: dashboard com graficos de participacao, top musicas, taxa de confirmacao
+- **Upload de arquivos**: via Cloudinary (cifras, playbacks, stems) com barra de progresso
 - **Estudio**: painel administrativo com usuarios, configuracoes da igreja e VS
 - **Mobile-first PWA**: instala no celular como se fosse um app
 
@@ -140,7 +143,22 @@ louva/
 | **click** | Click de ensaio |
 | **ensaio** | Audio para estudo |
 | **guia** | Guia de referencia |
+| **multitrack** | Multiplas faixas por instrumento (cada musico toca junto) |
 | **outro** | Outros materiais |
+
+## Upload de arquivos (Cloudinary)
+
+Para enviar playbacks, stems e cifras pelo proprio app, sem precisar hospedar em outro lugar:
+
+1. Crie conta gratis em [cloudinary.com](https://cloudinary.com) (25GB gratis)
+2. Va em **Settings > Upload > Add upload preset**
+3. **Signing Mode**: escolha `Unsigned`
+4. Anote o **Cloud Name** e o nome do **Upload Preset**
+5. No app: va em **Estudio > Configuracoes da Igreja**
+6. Cole os dois valores nos campos Cloudinary
+7. Salve - agora todos os botoes "Upload" funcionam!
+
+> Os arquivos vao para uma pasta `louva-studio/` no seu Cloudinary. 25GB gratis = muito espaco.
 
 ---
 

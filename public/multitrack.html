@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Multitrack Player - Louva.Studio</title>
+  <meta name="theme-color" content="#6366f1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" type="image/svg+xml" href="/icon.svg">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/multitrack.css">
+</head>
+<body class="multitrack-page">
+  <header class="mt-header">
+    <a href="javascript:history.back()" class="mt-back">&#8592; Voltar</a>
+    <div class="mt-title-block">
+      <h1 id="mt-title">Multitrack</h1>
+      <p id="mt-subtitle">Carregando...</p>
+    </div>
+    <button id="mt-fullscreen" class="mt-icon-btn" title="Tela cheia">&#9974;</button>
+  </header>
+
+  <main class="mt-main">
+    <section id="mt-loading" class="mt-status">
+      <div class="mt-spinner"></div>
+      <p>Carregando faixas...</p>
+    </section>
+
+    <section id="mt-error" class="mt-status hidden">
+      <p style="font-size:3rem;">&#9888;&#65039;</p>
+      <h2>Nenhuma faixa encontrada</h2>
+      <p id="mt-error-msg">Esta musica nao tem um multitrack cadastrado.</p>
+      <a href="javascript:history.back()" class="btn btn-primary">Voltar</a>
+    </section>
+
+    <section id="mt-player" class="hidden">
+      <div class="mt-master">
+        <div class="mt-time" id="mt-time">0:00 / 0:00</div>
+        <div class="mt-progress" id="mt-progress">
+          <div class="mt-progress-fill" id="mt-progress-fill"></div>
+          <div class="mt-progress-handle" id="mt-progress-handle"></div>
+        </div>
+        <div class="mt-controls">
+          <button id="mt-play" class="mt-play-btn" title="Tocar/Pausar">&#9654;</button>
+          <button id="mt-stop" class="mt-icon-btn" title="Parar">&#9632;</button>
+          <div class="mt-tempo">
+            <label>Andamento: <span id="mt-tempo-val">100</span>%</label>
+            <input type="range" id="mt-tempo" min="50" max="150" value="100" step="1">
+          </div>
+          <div class="mt-volume-master">
+            <label>&#128266; Master</label>
+            <input type="range" id="mt-master-vol" min="0" max="100" value="100" step="1">
+          </div>
+        </div>
+        <div class="mt-actions">
+          <button id="mt-mute-all" class="btn btn-sm btn-secondary">Mutar tudo</button>
+          <button id="mt-unmute-all" class="btn btn-sm btn-secondary">Desmutar tudo</button>
+          <button id="mt-reset" class="btn btn-sm btn-secondary">Resetar mix</button>
+        </div>
+      </div>
+
+      <div class="mt-tracks" id="mt-tracks"></div>
+
+      <div class="mt-instrument-hint" id="mt-instrument-hint">
+        <p><strong>&#128161; Dica:</strong> Toque no seu instrumento para mutar (voce nao quer ouvir a si mesmo). Os outros continuam tocando sincronizados.</p>
+      </div>
+    </section>
+  </main>
+
+  <div class="mt-toast" id="mt-toast"></div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/multitrack.js"></script>
+</body>
+</html>

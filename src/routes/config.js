@@ -25,7 +25,9 @@ const DEFAULTS = {
   whatsapp: '',
   site: '',
   versiculo: '',
-  mensagem_rodape: 'Que o louvor seja para a gloria de Deus!'
+  mensagem_rodape: 'Que o louvor seja para a gloria de Deus!',
+  cloudinary_cloud_name: '',
+  cloudinary_upload_preset: ''
 };
 
 router.get('/', authRequired, async (req, res, next) => {
@@ -58,6 +60,10 @@ router.put('/', authRequired, adminRequired, async (req, res, next) => {
       } else {
         await sheets.appendRow('Config', [k, String(body[k] ?? ''), atualizadoEm]);
       }
+    }
+
+    if (keys.some(k => k.startsWith('cloudinary_'))) {
+      const { sheets: sh } = require('../config/sheets');
     }
     res.json({ ok: true });
   } catch (e) { next(e); }

@@ -193,8 +193,8 @@ async function saveConfig(e) {
   e.preventDefault();
   const form = e.target;
   const body = {};
-  ['nome_igreja', 'cidade', 'endereco', 'pastor', 'louvor_responsavel', 'contato', 'whatsapp', 'site', 'logo_url', 'versiculo', 'mensagem_rodape']
-    .forEach(k => { body[k] = form.elements[k].value.trim(); });
+  ['nome_igreja', 'cidade', 'endereco', 'pastor', 'louvor_responsavel', 'contato', 'whatsapp', 'site', 'logo_url', 'versiculo', 'mensagem_rodape', 'cloudinary_cloud_name', 'cloudinary_upload_preset', 'email_host', 'email_port', 'email_user', 'email_pass', 'email_from_name']
+    .forEach(k => { body[k] = form.elements[k]?.value?.trim() || ''; });
   try {
     await API.put('/config', body);
     alert('Configuracoes salvas com sucesso.');
@@ -202,6 +202,28 @@ async function saveConfig(e) {
     alert('Erro: ' + err.message);
   }
 }
+
+async function testEmail() {
+  const email = document.getElementById('test-email-input').value.trim();
+  if (!email) return alert('Informe um email de destino.');
+  const btn = document.getElementById('btn-test-email');
+  btn.disabled = true;
+  btn.textContent = 'Enviando...';
+  try {
+    const r = await API.post('/notifications/test', { email });
+    alert('Email de teste enviado para ' + r.sentTo);
+  } catch (err) {
+    alert('Erro: ' + (err.message || 'Falha ao enviar'));
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Enviar teste';
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const testBtn = document.getElementById('btn-test-email');
+  if (testBtn) testBtn.addEventListener('click', testEmail);
+});
 
 async function loadUsers() {
   try {
@@ -260,3 +282,277 @@ window.deleteUser = async function (id) {
     alert('Erro: ' + err.message);
   }
 };
+
+let allMultitracks = [];
+
+async function loadMultitracks() {
+  try {
+    allMultitracks = await API.get('/vs');
+    renderMultitracks();
+    populateMultitrackFilters();
+  } catch (e) {
+    document.getElementById('multitrack-list').innerHTML = `<p class="empty">Erro: ${escapeHtml(e.message)}</p>`;
+  }
+}
+
+function populateMultitrackFilters() {
+  const sel = document.getElementById('filter-multitrack-song');
+  const formSel = document.querySelector('#form-multitrack select[name="musica_id"]');
+  const opts = allSongs.map(s => `<option value="${s.id}">${escapeHtml(s.titulo)}${s.artista ? ' - ' + escapeHtml(s.artista) : ''}</option>`).join('');
+  sel.innerHTML = '<option value="">Todas as musicas</option>' + opts;
+  formSel.innerHTML = '<option value="">Selecione a musica...</option>' + opts;
+}
+
+function renderMultitracks() {
+  const q = (document.getElementById('search-multitrack').value || '').toLowerCase();
+  const songFilter = document.getElementById('filter-multitrack-song').value;
+  const filtered = allMultitracks.filter(v => {
+    if (v.tipo !== 'multitrack') return false;
+    if (songFilter && v.musica_id !== songFilter) return false;
+    if (q && !(v.nome || '').toLowerCase().includes(q)) return false;
+    return true;
+  });
+
+  const container = document.getElementById('multitrack-list');
+  if (filtered.length === 0) {
+    container.innerHTML = '<p class="empty">Nenhum multitrack cadastrado. Clique em "+ Novo multitrack" para comecar.</p>';
+    return;
+  }
+
+  container.innerHTML = filtered.map(v => {
+    const song = allSongs.find(s => s.id === v.musica_id);
+    return `
+      <div class="card vs-card">
+        <div class="vs-card-head">
+          <div>
+            <div class="vs-card-title">${escapeHtml(v.nome)}</div>
+            <div class="vs-card-song">${song ? escapeHtml(song.titulo) : '(musica removida)'}</div>
+          </div>
+          <span class="badge badge-multitrack">Multitrack</span>
+        </div>
+        ${v.descricao ? `<div class="card-body">${escapeHtml(v.descricao)}</div>` : ''}
+        <div class="card-actions">
+          <button class="btn btn-sm btn-primary" onclick="openTracksModal('${v.id}')">Gerenciar faixas</button>
+          <a class="btn btn-sm" href="/multitrack.html?vs=${v.id}" target="_blank">&#9654; Abrir Player</a>
+          <button class="btn btn-sm btn-danger" onclick="deleteVS('${v.id}')">Excluir</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+window.openMultitrackForm = function (id) {
+  document.getElementById('modal-multitrack-title').textContent = id ? 'Editar multitrack' : 'Novo multitrack';
+  const form = document.getElementById('form-multitrack');
+  form.reset();
+  if (id) {
+    const v = allMultitracks.find(x => x.id === id);
+    if (v) {
+      form.id.value = v.id;
+      form.musica_id.value = v.musica_id;
+      form.nome.value = v.nome || '';
+      form.descricao.value = v.descricao || '';
+    }
+  }
+  openModal('modal-multitrack');
+};
+
+async function saveMultitrack(e) {
+  e.preventDefault();
+  const form = e.target;
+  const id = form.id.value;
+  const body = {
+    musica_id: form.musica_id.value,
+    nome: form.nome.value.trim(),
+    tipo: 'multitrack',
+    url: 'multitrack://' + (id || 'new'),
+    descricao: form.descricao.value.trim()
+  };
+  try {
+    let vsId;
+    if (id) {
+      await API.put('/vs/' + id, body);
+      vsId = id;
+    } else {
+      const created = await API.post('/vs', body);
+      vsId = created.id;
+    }
+    closeModal('modal-multitrack');
+    await loadMultitracks();
+    if (!id) openTracksModal(vsId);
+  } catch (err) {
+    toast('Erro: ' + err.message, 'error');
+  }
+}
+
+let currentTracksVS = null;
+let currentTracks = [];
+
+window.openTracksModal = async function (vsId) {
+  currentTracksVS = vsId;
+  const vs = allMultitracks.find(v => v.id === vsId);
+  document.getElementById('modal-tracks-title').textContent = `Faixas - ${vs ? vs.nome : ''}`;
+  document.querySelector('#form-track input[name="vs_id"]').value = vsId;
+  document.getElementById('form-track').reset();
+  document.querySelector('#form-track input[name="vs_id"]').value = vsId;
+  document.getElementById('btn-open-player').href = `/multitrack.html?vs=${vsId}`;
+  await loadTracks(vsId);
+  openModal('modal-tracks');
+};
+
+async function loadTracks(vsId) {
+  try {
+    currentTracks = await API.get(`/multitracks?vs_id=${vsId}`);
+    renderTracks();
+  } catch (e) {
+    toast('Erro: ' + e.message, 'error');
+  }
+}
+
+function renderTracks() {
+  const container = document.getElementById('tracks-list');
+  if (currentTracks.length === 0) {
+    container.innerHTML = '<p class="empty">Nenhuma faixa ainda. Adicione a primeira acima.</p>';
+    return;
+  }
+  const ICONS = { click: '🥁', voz: '🎤', violao: '🎸', guitarra: '🎸', baixo: '🎸', teclado: '🎹', bateria: '🥁', metronomo: '⏱️', outro: '🎵' };
+  container.innerHTML = currentTracks.map(t => `
+    <div class="card vs-card" style="padding:0.75rem;">
+      <div class="vs-card-head">
+        <div>
+          <div class="vs-card-title">${ICONS[t.instrumento] || '🎵'} ${escapeHtml(t.label || t.instrumento)}</div>
+          <div class="vs-card-song">Vol: ${t.volume_padrao}% ${t.mutado_padrao === 'true' ? '· Muted' : ''}</div>
+        </div>
+        <button class="btn btn-sm btn-danger" onclick="deleteTrack('${t.id}')">Excluir</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+async function saveTrack(e) {
+  e.preventDefault();
+  const form = e.target;
+  const body = {
+    vs_id: form.vs_id.value,
+    instrumento: form.instrumento.value,
+    label: form.label.value.trim() || form.instrumento.value,
+    url: form.url.value.trim(),
+    volume_padrao: parseInt(form.volume_padrao.value) || 80,
+    mutado_padrao: form.mutado_padrao.checked,
+    ordem: parseInt(form.ordem.value) || 0
+  };
+  try {
+    await API.post('/multitracks', body);
+    form.reset();
+    document.querySelector('#form-track input[name="vs_id"]').value = body.vs_id;
+    await loadTracks(body.vs_id);
+    toast('Faixa adicionada!', 'success');
+  } catch (err) {
+    toast('Erro: ' + err.message, 'error');
+  }
+}
+
+window.deleteTrack = async function (id) {
+  if (!confirm('Excluir esta faixa?')) return;
+  try {
+    await API.del('/multitracks/' + id);
+    await loadTracks(currentTracksVS);
+  } catch (err) {
+    toast('Erro: ' + err.message, 'error');
+  }
+};
+
+document.getElementById('btn-new-multitrack')?.addEventListener('click', () => openMultitrackForm());
+document.getElementById('form-multitrack')?.addEventListener('submit', saveMultitrack);
+document.getElementById('form-track')?.addEventListener('submit', saveTrack);
+document.getElementById('search-multitrack')?.addEventListener('input', renderMultitracks);
+document.getElementById('filter-multitrack-song')?.addEventListener('change', renderMultitracks);
+
+function setupVSFormUploads() {
+  const zone = document.getElementById('upload-vs-zone');
+  if (zone && !zone.dataset.setup) {
+    zone.dataset.setup = '1';
+    zone.appendChild(createUploadButton({
+      accept: 'audio/*',
+      label: '&#127911; Upload Audio',
+      folder: 'louva-studio/vs',
+      onUpload: (result) => {
+        document.getElementById('vs-url').value = result.url;
+        toast('Audio enviado!', 'success');
+      }
+    }));
+  }
+}
+
+function setupTrackFormUploads() {
+  const zone = document.getElementById('upload-track-zone');
+  if (zone && !zone.dataset.setup) {
+    zone.dataset.setup = '1';
+    zone.appendChild(createUploadButton({
+      accept: 'audio/*',
+      label: '&#127911; Upload',
+      folder: 'louva-studio/tracks',
+      onUpload: (result) => {
+        document.getElementById('track-url').value = result.url;
+        toast('Faixa enviada!', 'success');
+      }
+    }));
+  }
+}
+
+const _origOpenVSForm = window.openVSForm;
+window.openVSForm = function (id) {
+  _origOpenVSForm(id);
+  setupVSFormUploads();
+};
+const _origOpenTracks = window.openTracksModal;
+window.openTracksModal = function (vsId) {
+  _origOpenTracks(vsId);
+  setupTrackFormUploads();
+};
+
+const _origSwitchTab = switchTab;
+window._switchTabImpl = function (name) {
+  _origSwitchTab(name);
+  if (name === 'multitrack') loadMultitracks();
+};
+document.querySelectorAll('.studio-tab').forEach(tab => {
+  tab.addEventListener('click', () => window._switchTabImpl(tab.dataset.stab));
+});
+
+const _origRenderVS = window.renderVS || renderVS;
+renderVS = function () {
+  _origRenderVS();
+  if (typeof renderMultitracks === 'function') renderMultitracks();
+};
+
+(async function () {
+  currentUser = await loadUser();
+  if (!currentUser) return;
+  if (currentUser.perfil !== 'admin') {
+    document.querySelector('main').innerHTML = '<p class="empty">Acesso restrito a administradores.</p>';
+    return;
+  }
+  setupLogout();
+
+  document.getElementById('btn-new-vs').addEventListener('click', () => openVSForm());
+  document.getElementById('form-vs').addEventListener('submit', saveVS);
+  document.getElementById('search-vs').addEventListener('input', renderVS);
+  document.getElementById('filter-vs-song').addEventListener('change', renderVS);
+  document.getElementById('filter-vs-tipo').addEventListener('change', renderVS);
+  document.getElementById('form-config').addEventListener('submit', saveConfig);
+
+  await Promise.all([loadSongs(), loadVS(), loadUsers(), loadConfig()]);
+
+  const params = new URLSearchParams(location.search);
+  const songId = params.get('song');
+  if (songId) {
+    document.getElementById('filter-vs-song').value = songId;
+    renderVS();
+    openVSForm();
+    setTimeout(() => {
+      const sel = document.querySelector('#form-vs select[name="musica_id"]');
+      if (sel) sel.value = songId;
+    }, 50);
+  }
+})();
