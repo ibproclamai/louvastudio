@@ -112,17 +112,20 @@ async function deleteRow(tabName, rowIndex) {
 
 async function ensureTabs() {
   const required = [
-    { name: 'Usuarios', headers: ['id', 'nome', 'email', 'senha_hash', 'perfil', 'criado_em'] },
-    { name: 'Membros', headers: ['id', 'nome', 'funcao', 'telefone', 'email', 'disponibilidade', 'ativo', 'criado_em'] },
-    { name: 'Musicas', headers: ['id', 'titulo', 'artista', 'tom', 'bpm', 'cifra_url', 'video_url', 'observacoes', 'criado_em'] },
-    { name: 'Escalas', headers: ['id', 'data_culto', 'tipo_culto', 'local', 'observacoes', 'status', 'criado_por', 'criado_em'] },
+    { name: 'Usuarios', headers: ['id', 'nome', 'email', 'senha_hash', 'perfil', 'ministerio_id', 'criado_em'] },
+    { name: 'Ministerios', headers: ['id', 'nome', 'codigo_convite', 'admin_id', 'descricao', 'criado_em'] },
+    { name: 'MinisterioMembros', headers: ['id', 'ministerio_id', 'usuario_id', 'perfil', 'funcao', 'ativo', 'entrou_em'] },
+    { name: 'Membros', headers: ['id', 'ministerio_id', 'nome', 'funcao', 'telefone', 'email', 'disponibilidade', 'ativo', 'criado_em'] },
+    { name: 'Musicas', headers: ['id', 'ministerio_id', 'titulo', 'artista', 'tom', 'bpm', 'cifra_url', 'video_url', 'letra_url', 'tema', 'intensidade', 'referencias_biblicas', 'versiculo_chave', 'observacoes', 'criado_em'] },
+    { name: 'Escalas', headers: ['id', 'ministerio_id', 'data_culto', 'tipo_culto', 'local', 'observacoes', 'status', 'criado_por', 'criado_em'] },
     { name: 'EscalaMembros', headers: ['id', 'escala_id', 'membro_id', 'funcao_na_escala', 'confirmado'] },
     { name: 'EscalaMusicas', headers: ['id', 'escala_id', 'musica_id', 'ordem', 'vs_id'] },
-    { name: 'VS', headers: ['id', 'musica_id', 'nome', 'tipo', 'url', 'tom', 'bpm', 'descricao', 'criado_em'] },
+    { name: 'VS', headers: ['id', 'ministerio_id', 'musica_id', 'nome', 'tipo', 'url', 'tom', 'bpm', 'descricao', 'criado_em'] },
     { name: 'MultitrackTracks', headers: ['id', 'vs_id', 'ordem', 'instrumento', 'label', 'url', 'volume_padrao', 'mutado_padrao', 'criado_em'] },
-    { name: 'Eventos', headers: ['id', 'data', 'hora_inicio', 'hora_fim', 'tipo', 'titulo', 'local', 'descricao', 'cor', 'criado_por', 'criado_em'] },
+    { name: 'Eventos', headers: ['id', 'ministerio_id', 'data', 'hora_inicio', 'hora_fim', 'tipo', 'titulo', 'local', 'descricao', 'cor', 'criado_por', 'criado_em'] },
     { name: 'EventoParticipantes', headers: ['id', 'evento_id', 'membro_id', 'funcao', 'confirmado'] },
-    { name: 'ChatMessages', headers: ['id', 'remetente_id', 'canal', 'mensagem', 'criado_em'] },
+    { name: 'ChatMessages', headers: ['id', 'ministerio_id', 'remetente_id', 'canal', 'mensagem', 'criado_em'] },
+    { name: 'Devocionais', headers: ['id', 'ministerio_id', 'titulo', 'conteudo', 'versiculo', 'referencia', 'musica_id', 'autor_id', 'criado_em'] },
     { name: 'Config', headers: ['chave', 'valor', 'atualizado_em'] }
   ];
 

@@ -1,9 +1,8 @@
-(async function () {
+﻿(async function () {
   const user = await requireAuth();
   if (!user) return;
+  Sidebar.setup(user, '/my-schedule.html');
   window.__currentUser = user;
-  setupLogout();
-  setupRoleVisibility(user);
   isAdminUser = user.perfil === 'admin';
 
   try {

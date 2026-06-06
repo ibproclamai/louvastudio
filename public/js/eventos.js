@@ -1,4 +1,4 @@
-let allEventos = [];
+﻿let allEventos = [];
 let allMembers = [];
 let currentView = 'calendar';
 let currentMonth = new Date().getMonth() + 1;
@@ -10,10 +10,9 @@ let currentParticipants = [];
 document.addEventListener('DOMContentLoaded', async () => {
   const user = await requireAuth();
   if (!user) return;
+  Sidebar.setup(user, '/eventos.html');
   showUserName(user);
   applyAdminVisibility(user);
-  setupLogout();
-  setupNavToggle();
   loadTipos();
   await loadMembers();
   await loadEventos();

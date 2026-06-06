@@ -1,4 +1,4 @@
-let currentUser = null;
+﻿let currentUser = null;
 let lastMessageId = '';
 let allMessages = [];
 let allMembers = [];
@@ -8,10 +8,9 @@ let isSending = false;
 document.addEventListener('DOMContentLoaded', async () => {
   currentUser = await requireAuth();
   if (!currentUser) return;
+  Sidebar.setup(user, '/chat.html');
   showUserName(currentUser);
   applyAdminVisibility(currentUser);
-  setupLogout();
-  setupNavToggle();
   await loadMembers();
   await loadMessages();
   startPolling();

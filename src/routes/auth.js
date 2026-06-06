@@ -40,12 +40,13 @@ router.post('/register', async (req, res, next) => {
     const criadoEm = new Date().toISOString();
 
     await sheets.appendRow('Usuarios', [
-      id, nome, email.toLowerCase(), senhaHash, isFirst ? 'admin' : (perfil || 'membro'), criadoEm
+      id, nome, email.toLowerCase(), senhaHash, isFirst ? 'admin' : (perfil || 'membro'), '', criadoEm
     ]);
 
-    const token = signToken({ id, nome, email: email.toLowerCase(), perfil: isFirst ? 'admin' : (perfil || 'membro') });
+    const finalPerfil = isFirst ? 'admin' : (perfil || 'membro');
+    const token = signToken({ id, nome, email: email.toLowerCase(), perfil: finalPerfil, ministerio_id: '' });
     res.cookie('token', token, { httpOnly: true, sameSite: 'lax' });
-    res.status(201).json({ token, user: { id, nome, email, perfil: isFirst ? 'admin' : (perfil || 'membro') } });
+    res.status(201).json({ token, user: { id, nome, email, perfil: finalPerfil, ministerio_id: '' } });
   } catch (e) { next(e); }
 });
 
@@ -65,7 +66,13 @@ router.post('/login', async (req, res, next) => {
     const ok = await bcrypt.compare(senha, user.senha_hash);
     if (!ok) return res.status(401).json({ error: 'Credenciais invalidas' });
 
-    const payload = { id: user.id, nome: user.nome, email: user.email, perfil: user.perfil };
+    const payload = {
+      id: user.id,
+      nome: user.nome,
+      email: user.email,
+      perfil: user.perfil,
+      ministerio_id: user.ministerio_id || user['ministerio_id '] || ''
+    };
     const token = signToken(payload);
     res.cookie('token', token, { httpOnly: true, sameSite: 'lax' });
     res.json({ token, user: payload });

@@ -1,4 +1,4 @@
-const CACHE = 'louva-studio-v11';
+const CACHE = 'louva-studio-v12';
 const SHELL = [
   '/',
   '/index.html',

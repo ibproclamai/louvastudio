@@ -1,4 +1,4 @@
-(() => {
+﻿(() => {
   const INSTRUMENT_ICONS = {
     click: '🥁', voz: '🎤', violao: '🎸', guitarra: '🎸',
     baixo: '🎸', teclado: '🎹', bateria: '🥁', metronomo: '⏱️', outro: '🎵'
@@ -368,6 +368,7 @@
   document.addEventListener('DOMContentLoaded', async () => {
     const user = await requireAuth();
     if (!user) return;
+  Sidebar.setup(user, '/multitrack.html');
     init();
   });
 })();

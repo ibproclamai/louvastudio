@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Ministérios - Louva.Studio</title>
+  <meta name="theme-color" content="#0a0a0f">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" type="image/svg+xml" href="/icon.svg">
+  <link rel="apple-touch-icon" href="/icon.svg">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="app-layout">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand">
+        <div class="sidebar-brand-icon">♪</div>
+        <span>Louva.Studio</span>
+      </div>
+      <nav class="sidebar-nav" id="sidebar-nav">
+        <a class="sidebar-link" href="/dashboard.html"><span class="icon">🏠</span> Início</a>
+        <a class="sidebar-link" href="/songs.html"><span class="icon">📚</span> Repertório</a>
+        <a class="sidebar-link" href="/schedules.html"><span class="icon">📅</span> Escalas</a>
+        <a class="sidebar-link" href="/my-schedule.html"><span class="icon">✅</span> Minhas Escalas</a>
+        <a class="sidebar-link" href="/members.html"><span class="icon">👥</span> Equipe</a>
+        <a class="sidebar-link active" href="/ministerios.html"><span class="icon">⛪</span> Ministérios</a>
+        <a class="sidebar-link" href="/devocionais.html"><span class="icon">📖</span> Devocionais</a>
+        <a class="sidebar-link" href="/eventos.html"><span class="icon">🎵</span> Eventos</a>
+        <a class="sidebar-link" href="/chat.html"><span class="icon">💬</span> Chat</a>
+        <a class="sidebar-link" href="/studio.html"><span class="icon">🎚️</span> Estúdio</a>
+        <div class="sidebar-section">Administração</div>
+        <a class="sidebar-link admin-only hidden" href="/igreja.html"><span class="icon">⚙️</span> Igreja</a>
+        <a class="sidebar-link admin-only hidden" href="/relatorios.html"><span class="icon">📊</span> Relatórios</a>
+      </nav>
+      <div class="sidebar-user">
+        <div class="sidebar-avatar" id="user-avatar">?</div>
+        <div class="sidebar-user-info">
+          <div class="sidebar-user-name" id="user-name">Usuário</div>
+          <div class="sidebar-user-role" id="user-role">membro</div>
+        </div>
+        <button class="sidebar-logout" id="btn-logout" title="Sair">⎋</button>
+      </div>
+    </aside>
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+    <main class="main-content">
+      <header class="topbar">
+        <div class="topbar-brand">Louva.Studio</div>
+        <button class="mobile-toggle" id="mobile-toggle">☰</button>
+      </header>
+      <div class="container">
+        <div class="page-header">
+          <div>
+            <h1>⛪ Ministérios</h1>
+            <p class="subtitle">Gerencie os ministérios da sua igreja</p>
+          </div>
+          <button class="btn btn-primary" id="btn-new-ministerio">+ Novo Ministério</button>
+        </div>
+
+        <div id="ministerio-section" class="hidden">
+          <div class="card" style="background: var(--gradient-card); border-color: var(--border-strong);">
+            <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem;">
+              <div>
+                <h2 style="margin:0 0 0.25rem;" id="min-nome">Carregando...</h2>
+                <p class="subtitle" style="margin:0;" id="min-descricao"></p>
+              </div>
+              <div style="text-align:right;">
+                <div style="font-size:0.75rem; color:var(--text-muted); margin-bottom:0.25rem;">Código de convite</div>
+                <div style="display:flex; align-items:center; gap:0.5rem;">
+                  <code id="min-codigo" style="font-size:1.5rem; font-weight:800; background:var(--bg-2); padding:0.4rem 0.8rem; border-radius:var(--radius-sm); letter-spacing:0.1em;">----</code>
+                  <button class="btn btn-sm" id="btn-copy-code" title="Copiar">📋</button>
+                </div>
+                <button class="btn btn-ghost btn-sm" id="btn-regen-code" style="margin-top:0.5rem;">↻ Gerar novo código</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="section">
+            <h2>Membros do Ministério</h2>
+            <div id="min-membros-list" class="card-grid"></div>
+          </div>
+        </div>
+
+        <div id="no-ministerio" class="card" style="text-align:center; padding:3rem 1.5rem;">
+          <div style="font-size:3rem; margin-bottom:0.5rem;">⛪</div>
+          <h2 style="margin-bottom:0.5rem;">Você ainda não tem um ministério</h2>
+          <p class="subtitle" style="margin-bottom:1.5rem;">Crie um ministério para sua igreja ou entre em um usando o código de convite.</p>
+          <div style="display:flex; gap:0.5rem; justify-content:center; flex-wrap:wrap;">
+            <button class="btn btn-primary" id="btn-create-first">+ Criar Ministério</button>
+            <button class="btn btn-ghost" id="btn-join">Entrar com código</button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div id="modal-ministerio" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modal-min-title">Novo Ministério</h2>
+        <button class="modal-close" data-close>&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="form-ministerio">
+          <div class="form-group">
+            <label>Nome do Ministério</label>
+            <input type="text" name="nome" class="input" required placeholder="Ex: Ministério de Louvor Central">
+          </div>
+          <div class="form-group">
+            <label>Descrição (opcional)</label>
+            <textarea name="descricao" class="input" rows="2" placeholder="Para qual igreja/cidade?"></textarea>
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn btn-ghost" data-close>Cancelar</button>
+            <button type="submit" class="btn btn-primary">Criar Ministério</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div id="modal-join" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Entrar em um Ministério</h2>
+        <button class="modal-close" data-close>&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="form-join">
+          <div class="form-group">
+            <label>Código de convite</label>
+            <input type="text" name="codigo" class="input" required placeholder="Ex: A1B2C3" style="text-transform:uppercase; font-size:1.2rem; letter-spacing:0.1em; text-align:center;">
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn btn-ghost" data-close>Cancelar</button>
+            <button type="submit" class="btn btn-primary">Entrar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/sidebar.js"></script>
+  <script src="/js/ministerios.js"></script>
+</body>
+</html>

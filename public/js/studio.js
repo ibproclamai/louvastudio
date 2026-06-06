@@ -1,4 +1,4 @@
-let allVS = [];
+﻿let allVS = [];
 let allSongs = [];
 let allUsers = [];
 let currentUser = null;
@@ -17,9 +17,8 @@ const TIPOS_LABEL = {
 (async function () {
   currentUser = await requireAuth();
   if (!currentUser) return;
+  Sidebar.setup(user, '/studio.html');
   window.__currentUser = currentUser;
-  setupLogout();
-  setupRoleVisibility(currentUser);
   isAdmin = currentUser.perfil === 'admin';
 
   document.querySelectorAll('.studio-tab').forEach(tab => {

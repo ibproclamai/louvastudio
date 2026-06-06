@@ -18,6 +18,8 @@ const reportsRoutes = require('./src/routes/reports');
 const eventsRoutes = require('./src/routes/events');
 const chatRoutes = require('./src/routes/chat');
 const notificationsRoutes = require('./src/routes/notifications');
+const ministeriosRoutes = require('./src/routes/ministerios');
+const devocionaisRoutes = require('./src/routes/devocionais');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -89,6 +91,8 @@ app.use('/api/reports', reportsRoutes);
 app.use('/api/events', eventsRoutes);
 app.use('/api/chat', chatRoutes);
 app.use('/api/notifications', notificationsRoutes);
+app.use('/api/ministerios', ministeriosRoutes);
+app.use('/api/devocionais', devocionaisRoutes);
 
 app.get('/', (req, res) => {
   const s = checkSetup();

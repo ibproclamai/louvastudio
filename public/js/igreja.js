@@ -1,10 +1,7 @@
-document.addEventListener('DOMContentLoaded', async () => {
+﻿document.addEventListener('DOMContentLoaded', async () => {
   const user = await requireRole('admin');
   if (!user) return;
-  setupLogout();
-  setupAdminVisibility(user);
-  setupRoleVisibility(user);
-  setupNavToggle();
+  Sidebar.setup(user, '/igreja.html');
   await loadExisting();
   bindEvents();
 });

@@ -9,10 +9,9 @@ const selectedMembers = [];
 const selectedSongs = [];
 
 (async function () {
-  currentUser = await loadUser();
+  currentUser = await requireAuth();
   if (!currentUser) return;
-  setupLogout();
-  setupAdminVisibility(currentUser);
+  Sidebar.setup(currentUser, '/schedules.html');
 
   document.getElementById('btn-new-schedule').addEventListener('click', () => openScheduleForm());
   document.getElementById('form-schedule').addEventListener('submit', saveSchedule);

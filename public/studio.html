@@ -1,13 +1,12 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Estúdio - Louva.Studio</title>
-  <meta name="theme-color" content="#6366f1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>🎚️ Estúdio - Louva.Studio</title>
+  <meta name="theme-color" content="#0a0a0f">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Louva.Studio">
   <link rel="manifest" href="/manifest.json">
   <link rel="icon" type="image/svg+xml" href="/icon.svg">
   <link rel="apple-touch-icon" href="/icon.svg">
@@ -15,38 +14,36 @@
   <link rel="stylesheet" href="/css/studio.css">
 </head>
 <body>
-  <nav class="navbar">
-    <div class="nav-brand">Louva.Studio</div>
-    <button class="nav-toggle" id="nav-toggle" aria-label="Menu">
-      <span></span><span></span><span></span>
-    </button>
-    <div class="nav-menu" id="nav-menu">
-      <ul class="nav-links">
-        <li><a href="/dashboard.html">Inicio</a></li>
-        <li><a href="/songs.html">Músicas</a></li>
-        <li><a href="/schedules.html">Escalas</a></li>
-        <li><a href="/my-schedule.html">Minhas Escalas</a></li>
-        <li><a href="/eventos.html">Eventos</a></li>
-        <li><a href="/chat.html">Chat</a></li>
-        <li class="admin-only hidden"><a href="/igreja.html">Igreja</a></li>
-        <li class="admin-only hidden"><a href="/members.html">Membros</a></li>
-        <li class="admin-only hidden"><a href="/relatórios.html">Relatórios</a></li>
-        <li data-requires-role="membro" class="member-only"><a href="/studio.html" class="active">Estúdio</a></li>
-      </ul>
-      <div class="nav-user">
-        <span id="user-name" class="user-chip"></span>
-        <button id="btn-logout" class="btn btn-sm">Sair</button>
+  <div class="app-layout">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand">
+        <div class="sidebar-brand-icon">â™ª</div>
+        <span>Louva.Studio</span>
       </div>
-    </div>
-  </nav>
-  <div id="nav-overlay" class="nav-overlay"></div>
-
-  <main class="container">
-    <div class="page-header">
-      <h1>Estúdio</h1>
-      <span class="badge badge-primary">Admin</span>
-    </div>
-    <p class="subtitle">Gerencie Virtual Sound (VS), configurações da igreja e usuários.</p>
+      <nav class="sidebar-nav" id="sidebar-nav"></nav>
+      <div class="sidebar-user">
+        <div class="sidebar-avatar" id="user-avatar">?</div>
+        <div class="sidebar-user-info">
+          <div class="sidebar-user-name" id="user-name">UsuÃ¡rio</div>
+          <div class="sidebar-user-role" id="user-role">membro</div>
+        </div>
+        <button class="sidebar-logout" id="btn-logout" title="Sair">âŽ‹</button>
+      </div>
+    </aside>
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+    <main class="main-content">
+      <header class="topbar">
+        <div class="topbar-brand">Louva.Studio</div>
+        <button class="mobile-toggle" id="mobile-toggle">â˜°</button>
+      </header>
+      <div class="container">
+        <div class="page-header">
+          <div>
+            <h1>🎚️ Estúdio</h1>
+            <p class="subtitle">VS e Multitracks para ensaios</p>
+          </div>
+        </div>
+<p class="subtitle">Gerencie Virtual Sound (VS), configurações da igreja e usuários.</p>
 
     <div class="studio-tabs">
       <button class="studio-tab active" data-stab="vs">Virtual Sound (VS)</button>
@@ -56,11 +53,6 @@
     </div>
 
     <section id="panel-vs" class="studio-panel">
-      <div class="page-header">
-        <h2>Trilhas de Virtual Sound</h2>
-        <button id="btn-new-vs" class="btn btn-primary" data-admin-only>+ Nova trilha VS</button>
-      </div>
-
       <div class="filters filters-row">
         <input type="text" id="search-vs" placeholder="Buscar por nome...">
         <select id="filter-vs-song">
@@ -84,11 +76,6 @@
     </section>
 
     <section id="panel-multitrack" class="studio-panel hidden">
-      <div class="page-header">
-        <h2>Multitracks (stems por instrumento)</h2>
-        <button id="btn-new-multitrack" class="btn btn-primary" data-admin-only>+ Novo multitrack</button>
-      </div>
-
       <div class="filters filters-row">
         <input type="text" id="search-multitrack" placeholder="Buscar por nome...">
         <select id="filter-multitrack-song">
@@ -106,9 +93,6 @@
     </section>
 
     <section id="panel-config" class="studio-panel hidden">
-      <div class="page-header">
-        <h2>Configurações da Igreja</h2>
-      </div>
       <form id="form-config" class="form config-form">
         <div class="form-row">
           <label>Nome da igreja
@@ -204,16 +188,14 @@
     </section>
 
     <section id="panel-users" class="studio-panel hidden">
-      <div class="page-header">
-        <h2>Usuários do sistema</h2>
-      </div>
       <div id="users-list" class="card-grid">
         <p class="empty">Carregando...</p>
       </div>
     </section>
-  </main>
+    </main>
+  </div>
 
-  <div id="modal-multitrack" class="modal hidden">
+<div id="modal-multitrack" class="modal hidden">
     <div class="modal-content modal-large">
       <div class="modal-header">
         <h2 id="modal-multitrack-title">Novo multitrack</h2>
@@ -240,7 +222,7 @@
     </div>
   </div>
 
-  <div id="modal-tracks" class="modal hidden">
+<div id="modal-tracks" class="modal hidden">
     <div class="modal-content modal-large">
       <div class="modal-header">
         <h2 id="modal-tracks-title">Faixas do multitrack</h2>
@@ -300,7 +282,7 @@
     </div>
   </div>
 
-  <div id="modal-vs" class="modal hidden">
+<div id="modal-vs" class="modal hidden">
     <div class="modal-content modal-large">
       <div class="modal-header">
         <h2 id="modal-vs-title">Nova trilha VS</h2>
@@ -351,8 +333,8 @@
       </form>
     </div>
   </div>
-
   <script src="/js/api.js"></script>
+  <script src="/js/sidebar.js"></script>
   <script src="/js/studio.js"></script>
 </body>
 </html>

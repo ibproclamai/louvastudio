@@ -1,61 +1,58 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Membros - Louva.Studio</title>
-  <meta name="theme-color" content="#6366f1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>👥 Equipe - Louva.Studio</title>
+  <meta name="theme-color" content="#0a0a0f">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Louva.Studio">
   <link rel="manifest" href="/manifest.json">
   <link rel="icon" type="image/svg+xml" href="/icon.svg">
   <link rel="apple-touch-icon" href="/icon.svg">
   <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-  <nav class="navbar">
-    <div class="nav-brand">Louva.Studio</div>
-    <button class="nav-toggle" id="nav-toggle" aria-label="Menu">
-      <span></span><span></span><span></span>
-    </button>
-    <div class="nav-menu" id="nav-menu">
-      <ul class="nav-links">
-        <li><a href="/dashboard.html">Inicio</a></li>
-        <li><a href="/songs.html">Músicas</a></li>
-        <li><a href="/schedules.html">Escalas</a></li>
-        <li><a href="/my-schedule.html">Minhas Escalas</a></li>
-        <li><a href="/eventos.html">Eventos</a></li>
-        <li><a href="/chat.html">Chat</a></li>
-        <li class="admin-only hidden"><a href="/igreja.html">Igreja</a></li>
-        <li class="admin-only hidden"><a href="/members.html" class="active">Membros</a></li>
-        <li class="admin-only hidden"><a href="/relatórios.html">Relatórios</a></li>
-        <li data-requires-role="membro" class="member-only"><a href="/studio.html">Estúdio</a></li>
-      </ul>
-      <div class="nav-user">
-        <span id="user-name" class="user-chip"></span>
-        <button id="btn-logout" class="btn btn-sm">Sair</button>
+  <div class="app-layout">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand">
+        <div class="sidebar-brand-icon">â™ª</div>
+        <span>Louva.Studio</span>
       </div>
-    </div>
-  </nav>
-  <div id="nav-overlay" class="nav-overlay"></div>
-
-  <main class="container">
-    <div class="page-header">
-      <h1>Membros da equipe</h1>
-      <button id="btn-new-member" class="btn btn-primary">+ Novo membro</button>
-    </div>
-
-    <div class="filters">
+      <nav class="sidebar-nav" id="sidebar-nav"></nav>
+      <div class="sidebar-user">
+        <div class="sidebar-avatar" id="user-avatar">?</div>
+        <div class="sidebar-user-info">
+          <div class="sidebar-user-name" id="user-name">UsuÃ¡rio</div>
+          <div class="sidebar-user-role" id="user-role">membro</div>
+        </div>
+        <button class="sidebar-logout" id="btn-logout" title="Sair">âŽ‹</button>
+      </div>
+    </aside>
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+    <main class="main-content">
+      <header class="topbar">
+        <div class="topbar-brand">Louva.Studio</div>
+        <button class="mobile-toggle" id="mobile-toggle">â˜°</button>
+      </header>
+      <div class="container">
+        <div class="page-header">
+          <div>
+            <h1>👥 Equipe</h1>
+            <p class="subtitle">Membros do ministério</p>
+          </div>
+        </div>
+<div class="filters">
       <input type="text" id="search-member" placeholder="Buscar por nome ou função...">
     </div>
 
     <div id="members-list" class="card-grid">
       <p class="empty">Carregando...</p>
     </div>
-  </main>
+    </main>
+  </div>
 
-  <div id="modal-member" class="modal hidden">
+<div id="modal-member" class="modal hidden">
     <div class="modal-content">
       <div class="modal-header">
         <h2 id="modal-title">Novo membro</h2>
@@ -101,8 +98,8 @@
       </form>
     </div>
   </div>
-
   <script src="/js/api.js"></script>
+  <script src="/js/sidebar.js"></script>
   <script src="/js/members.js"></script>
 </body>
 </html>

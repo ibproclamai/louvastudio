@@ -1,50 +1,49 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Relatórios - Louva.Studio</title>
-  <meta name="theme-color" content="#6366f1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>📊 Relatórios - Louva.Studio</title>
+  <meta name="theme-color" content="#0a0a0f">
   <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <link rel="manifest" href="/manifest.json">
   <link rel="icon" type="image/svg+xml" href="/icon.svg">
+  <link rel="apple-touch-icon" href="/icon.svg">
   <link rel="stylesheet" href="/css/style.css">
   <link rel="stylesheet" href="/css/relatórios.css">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
 <body>
-  <nav class="navbar">
-    <div class="nav-brand">Louva.Studio</div>
-    <button class="nav-toggle" id="nav-toggle" aria-label="Menu">
-      <span></span><span></span><span></span>
-    </button>
-    <div class="nav-menu" id="nav-menu">
-      <ul class="nav-links">
-        <li><a href="/dashboard.html">Inicio</a></li>
-        <li><a href="/songs.html">Músicas</a></li>
-        <li><a href="/schedules.html">Escalas</a></li>
-        <li><a href="/my-schedule.html">Minhas Escalas</a></li>
-        <li><a href="/eventos.html">Eventos</a></li>
-        <li><a href="/chat.html">Chat</a></li>
-        <li class="admin-only hidden"><a href="/igreja.html">Igreja</a></li>
-        <li class="admin-only hidden"><a href="/members.html">Membros</a></li>
-        <li class="admin-only hidden"><a href="/relatórios.html" class="active">Relatórios</a></li>
-        <li data-requires-role="membro" class="member-only"><a href="/studio.html">Estúdio</a></li>
-      </ul>
-      <div class="nav-user">
-        <span id="user-name" class="user-chip"></span>
-        <button id="btn-logout" class="btn btn-sm">Sair</button>
+  <div class="app-layout">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand">
+        <div class="sidebar-brand-icon">â™ª</div>
+        <span>Louva.Studio</span>
       </div>
-    </div>
-  </nav>
-  <div id="nav-overlay" class="nav-overlay"></div>
-
-  <main class="container">
-    <div class="page-header">
-      <h1>Relatórios</h1>
-      <button id="btn-refresh" class="btn btn-sm">&#8635; Atualizar</button>
-    </div>
-    <p class="subtitle">Visao geral do ministério de louvor</p>
+      <nav class="sidebar-nav" id="sidebar-nav"></nav>
+      <div class="sidebar-user">
+        <div class="sidebar-avatar" id="user-avatar">?</div>
+        <div class="sidebar-user-info">
+          <div class="sidebar-user-name" id="user-name">UsuÃ¡rio</div>
+          <div class="sidebar-user-role" id="user-role">membro</div>
+        </div>
+        <button class="sidebar-logout" id="btn-logout" title="Sair">âŽ‹</button>
+      </div>
+    </aside>
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+    <main class="main-content">
+      <header class="topbar">
+        <div class="topbar-brand">Louva.Studio</div>
+        <button class="mobile-toggle" id="mobile-toggle">â˜°</button>
+      </header>
+      <div class="container">
+        <div class="page-header">
+          <div>
+            <h1>📊 Relatórios</h1>
+            <p class="subtitle">Estatísticas do ministério</p>
+          </div>
+        </div>
+<p class="subtitle">Visao geral do ministério de louvor</p>
 
     <section class="kpi-grid">
       <div class="kpi-card kpi-primary">
@@ -137,9 +136,10 @@
     <div id="report-error" class="card hidden" style="border-color: var(--danger); color: var(--danger);">
       <p>Erro ao carregar relatórios. Tente atualizar.</p>
     </div>
-  </main>
-
+    </main>
+  </div>
   <script src="/js/api.js"></script>
-  <script src="/js/relatórios.js"></script>
+  <script src="/js/sidebar.js"></script>
+  <script src="/js/relatorios.js"></script>
 </body>
 </html>

@@ -1,13 +1,10 @@
-let allMembers = [];
+﻿let allMembers = [];
 let currentUser = null;
 
 (async function () {
   currentUser = await requireRole('admin');
   if (!currentUser) return;
-  setupLogout();
-  setupAdminVisibility(currentUser);
-  setupRoleVisibility(currentUser);
-
+  Sidebar.setup(user, '/members.html');
   document.getElementById('btn-new-member').addEventListener('click', () => openMemberForm());
   document.getElementById('form-member').addEventListener('submit', saveMember);
   document.getElementById('search-member').addEventListener('input', renderMembers);

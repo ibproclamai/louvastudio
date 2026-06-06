@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Devocionais - Louva.Studio</title>
+  <meta name="theme-color" content="#0a0a0f">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" type="image/svg+xml" href="/icon.svg">
+  <link rel="apple-touch-icon" href="/icon.svg">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="app-layout">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand">
+        <div class="sidebar-brand-icon">♪</div>
+        <span>Louva.Studio</span>
+      </div>
+      <nav class="sidebar-nav" id="sidebar-nav">
+        <a class="sidebar-link" href="/dashboard.html"><span class="icon">🏠</span> Início</a>
+        <a class="sidebar-link" href="/songs.html"><span class="icon">📚</span> Repertório</a>
+        <a class="sidebar-link" href="/schedules.html"><span class="icon">📅</span> Escalas</a>
+        <a class="sidebar-link" href="/my-schedule.html"><span class="icon">✅</span> Minhas Escalas</a>
+        <a class="sidebar-link" href="/members.html"><span class="icon">👥</span> Equipe</a>
+        <a class="sidebar-link" href="/ministerios.html"><span class="icon">⛪</span> Ministérios</a>
+        <a class="sidebar-link active" href="/devocionais.html"><span class="icon">📖</span> Devocionais</a>
+        <a class="sidebar-link" href="/eventos.html"><span class="icon">🎵</span> Eventos</a>
+        <a class="sidebar-link" href="/chat.html"><span class="icon">💬</span> Chat</a>
+        <a class="sidebar-link" href="/studio.html"><span class="icon">🎚️</span> Estúdio</a>
+        <div class="sidebar-section">Administração</div>
+        <a class="sidebar-link admin-only hidden" href="/igreja.html"><span class="icon">⚙️</span> Igreja</a>
+        <a class="sidebar-link admin-only hidden" href="/relatorios.html"><span class="icon">📊</span> Relatórios</a>
+      </nav>
+      <div class="sidebar-user">
+        <div class="sidebar-avatar" id="user-avatar">?</div>
+        <div class="sidebar-user-info">
+          <div class="sidebar-user-name" id="user-name">Usuário</div>
+          <div class="sidebar-user-role" id="user-role">membro</div>
+        </div>
+        <button class="sidebar-logout" id="btn-logout" title="Sair">⎋</button>
+      </div>
+    </aside>
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+    <main class="main-content">
+      <header class="topbar">
+        <div class="topbar-brand">Louva.Studio</div>
+        <button class="mobile-toggle" id="mobile-toggle">☰</button>
+      </header>
+      <div class="container">
+        <div class="page-header">
+          <div>
+            <h1>📖 Devocionais</h1>
+            <p class="subtitle">Reflexões bíblicas para aprofundar o louvor</p>
+          </div>
+          <button class="btn btn-primary" id="btn-new-dev" data-admin-only>+ Novo Devocional</button>
+        </div>
+
+        <div class="filters">
+          <input type="search" id="filter-q" placeholder="Buscar devocionais...">
+          <select id="filter-musica">
+            <option value="">Todas as músicas</option>
+          </select>
+        </div>
+
+        <div id="devs-list" class="card-grid"></div>
+      </div>
+    </main>
+  </div>
+
+  <div id="modal-dev" class="modal hidden">
+    <div class="modal-content modal-large">
+      <div class="modal-header">
+        <h2 id="modal-dev-title">Novo Devocional</h2>
+        <button class="modal-close" data-close>&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="form-dev">
+          <div class="form-group">
+            <label>Título</label>
+            <input type="text" name="titulo" class="input" required placeholder="Ex: O poder da gratidão no louvor">
+          </div>
+          <div class="form-row form-row-2">
+            <div class="form-group">
+              <label>Versículo</label>
+              <input type="text" name="versiculo" class="input" placeholder="Ex: 'Louvem o Senhor, porque ele é bom'">
+            </div>
+            <div class="form-group">
+              <label>Referência</label>
+              <input type="text" name="referencia" class="input" placeholder="Ex: Salmos 107:1">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Música relacionada (opcional)</label>
+            <select name="musica_id" id="dev-musica" class="input">
+              <option value="">— Nenhuma —</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Conteúdo do devocional</label>
+            <textarea name="conteudo" class="input" rows="8" required placeholder="Escreva a reflexão bíblica baseada na música ou tema..."></textarea>
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn btn-ghost" data-close>Cancelar</button>
+            <button type="submit" class="btn btn-primary">Salvar Devocional</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/sidebar.js"></script>
+  <script src="/js/devocionais.js"></script>
+</body>
+</html>

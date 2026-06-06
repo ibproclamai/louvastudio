@@ -1,10 +1,9 @@
-let charts = {};
+﻿let charts = {};
 
 (async function () {
   const user = await requireRole('admin');
   if (!user) return;
-  setupLogout();
-  setupRoleVisibility(user);
+  Sidebar.setup(user, '/relatorios.html');
   document.getElementById('btn-refresh').addEventListener('click', loadAll);
   await loadAll();
 })();

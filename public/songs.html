@@ -2,104 +2,187 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Músicas - Louva.Studio</title>
-  <meta name="theme-color" content="#6366f1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Repertório - Louva.Studio</title>
+  <meta name="theme-color" content="#0a0a0f">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Louva.Studio">
   <link rel="manifest" href="/manifest.json">
   <link rel="icon" type="image/svg+xml" href="/icon.svg">
   <link rel="apple-touch-icon" href="/icon.svg">
   <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/songs.css">
 </head>
 <body>
-  <nav class="navbar">
-    <div class="nav-brand">Louva.Studio</div>
-    <button class="nav-toggle" id="nav-toggle" aria-label="Menu">
-      <span></span><span></span><span></span>
-    </button>
-    <div class="nav-menu" id="nav-menu">
-      <ul class="nav-links">
-        <li><a href="/dashboard.html">Inicio</a></li>
-        <li><a href="/songs.html" class="active">Músicas</a></li>
-        <li><a href="/schedules.html">Escalas</a></li>
-        <li><a href="/my-schedule.html">Minhas Escalas</a></li>
-        <li><a href="/eventos.html">Eventos</a></li>
-        <li><a href="/chat.html">Chat</a></li>
-        <li class="admin-only hidden"><a href="/igreja.html">Igreja</a></li>
-        <li class="admin-only hidden"><a href="/members.html">Membros</a></li>
-        <li class="admin-only hidden"><a href="/relatórios.html">Relatórios</a></li>
-        <li data-requires-role="membro" class="member-only"><a href="/studio.html">Estúdio</a></li>
-      </ul>
-      <div class="nav-user">
-        <span id="user-name" class="user-chip"></span>
-        <button id="btn-logout" class="btn btn-sm">Sair</button>
+  <div class="app-layout">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand">
+        <div class="sidebar-brand-icon">♪</div>
+        <span>Louva.Studio</span>
       </div>
-    </div>
-  </nav>
-  <div id="nav-overlay" class="nav-overlay"></div>
+      <nav class="sidebar-nav" id="sidebar-nav"></nav>
+      <div class="sidebar-user">
+        <div class="sidebar-avatar" id="user-avatar">?</div>
+        <div class="sidebar-user-info">
+          <div class="sidebar-user-name" id="user-name">Usuário</div>
+          <div class="sidebar-user-role" id="user-role">membro</div>
+        </div>
+        <button class="sidebar-logout" id="btn-logout" title="Sair">⎋</button>
+      </div>
+    </aside>
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+    <main class="main-content">
+      <header class="topbar">
+        <div class="topbar-brand">Louva.Studio</div>
+        <button class="mobile-toggle" id="mobile-toggle">☰</button>
+      </header>
+      <div class="container">
+        <div class="page-header">
+          <div>
+            <h1>📚 Repertório</h1>
+            <p class="subtitle">Suas músicas organizadas com temas, intensidade e referências bíblicas</p>
+          </div>
+          <button class="btn btn-primary" id="btn-new-song" data-admin-only>+ Nova música</button>
+        </div>
 
-  <main class="container">
-    <div class="page-header">
-      <h1>Repertório de músicas</h1>
-      <button id="btn-new-song" class="btn btn-primary" data-admin-only>+ Nova música</button>
-    </div>
+        <div class="filters">
+          <input type="search" id="filter-q" placeholder="Buscar por título, artista, letra...">
+          <select id="filter-tema">
+            <option value="">Todos os temas</option>
+            <option value="graca">Graça</option>
+            <option value="salvacao">Salvação</option>
+            <option value="ceia">Ceia</option>
+            <option value="adoracao">Adoração</option>
+            <option value="gratidao">Gratidão</option>
+            <option value="cruz">Cruz</option>
+            <option value="esperanca">Esperança</option>
+            <option value="santidade">Santidade</option>
+            <option value="amor">Amor de Deus</option>
+            <option value="fidelidade">Fidelidade</option>
+            <option value="segunda_vinda">Segunda vinda</option>
+          </select>
+          <select id="filter-intensidade">
+            <option value="">Todas as intensidades</option>
+            <option value="calma">Calma</option>
+            <option value="media">Média</option>
+            <option value="alta">Agitada</option>
+          </select>
+          <select id="filter-livro">
+            <option value="">Todos os livros</option>
+          </select>
+        </div>
 
-    <div class="filters">
-      <input type="text" id="search-song" placeholder="Buscar por título ou artista...">
-    </div>
+        <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); margin: 0 0 1rem;">
+          <div class="stat-card" style="padding: 0.75rem 1rem;">
+            <div>
+              <div class="stat-value" id="stat-total" style="font-size:1.25rem;">0</div>
+              <div class="stat-label">músicas</div>
+            </div>
+          </div>
+          <div class="stat-card" style="padding: 0.75rem 1rem;">
+            <div>
+              <div class="stat-value" id="stat-shown" style="font-size:1.25rem;">0</div>
+              <div class="stat-label">filtradas</div>
+            </div>
+          </div>
+        </div>
 
-    <div id="songs-list" class="card-grid">
-      <p class="empty">Carregando...</p>
-    </div>
-  </main>
+        <div id="songs-list" class="song-grid"></div>
+      </div>
+    </main>
+  </div>
 
   <div id="modal-song" class="modal hidden">
-    <div class="modal-content">
+    <div class="modal-content modal-large">
       <div class="modal-header">
-        <h2 id="modal-title">Nova música</h2>
+        <h2 id="modal-song-title">Nova música</h2>
         <button class="modal-close" data-close>&times;</button>
       </div>
-      <form id="form-song" class="form">
-        <input type="hidden" name="id">
-        <label>Título *
-          <input type="text" name="título" required>
-        </label>
-        <label>Artista / Banda
-          <input type="text" name="artista">
-        </label>
-        <div class="form-row">
-          <label>Tom
-            <input type="text" name="tom" placeholder="Ex: G, Am, C">
-          </label>
-          <label>BPM
-            <input type="number" name="bpm" min="0">
-          </label>
-        </div>
-        <div class="field-with-upload">
-          <label>Link da cifra
-            <input type="url" name="cifra_url" id="cifra-url" placeholder="https://... ou faça upload">
-          </label>
-          <div id="upload-cifra-zone"></div>
-        </div>
-        <div class="field-with-upload">
-          <label>Link do video (YouTube)
-            <input type="url" name="video_url" id="video-url" placeholder="https://... ou cole link do YouTube">
-          </label>
-        </div>
-        <label>Observações
-          <textarea name="observações" rows="2"></textarea>
-        </label>
-        <div class="form-actions">
-          <button type="button" class="btn" data-close>Cancelar</button>
-          <button type="submit" class="btn btn-primary">Salvar</button>
-        </div>
-      </form>
+      <div class="modal-body">
+        <form id="form-song">
+          <div class="form-group">
+            <label>Título *</label>
+            <input type="text" name="titulo" class="input" required>
+          </div>
+          <div class="form-row form-row-3">
+            <div class="form-group">
+              <label>Artista</label>
+              <input type="text" name="artista" class="input">
+            </div>
+            <div class="form-group">
+              <label>Tom</label>
+              <input type="text" name="tom" class="input" placeholder="Ex: G">
+            </div>
+            <div class="form-group">
+              <label>BPM</label>
+              <input type="number" name="bpm" class="input">
+            </div>
+          </div>
+          <div class="form-row form-row-2">
+            <div class="form-group">
+              <label>Link da cifra</label>
+              <input type="url" name="cifra_url" class="input" placeholder="https://cifraclub.com.br/...">
+            </div>
+            <div class="form-group">
+              <label>Link do vídeo</label>
+              <input type="url" name="video_url" class="input" placeholder="https://youtube.com/...">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Link da letra (opcional)</label>
+            <input type="url" name="letra_url" class="input" placeholder="https://letras.mus.br/...">
+          </div>
+          <div class="form-row form-row-2">
+            <div class="form-group">
+              <label>Tema</label>
+              <select name="tema" class="input" id="song-tema">
+                <option value="">— Selecione —</option>
+                <option value="graca">Graça</option>
+                <option value="salvacao">Salvação</option>
+                <option value="ceia">Ceia</option>
+                <option value="adoracao">Adoração</option>
+                <option value="gratidao">Gratidão</option>
+                <option value="cruz">Cruz</option>
+                <option value="esperanca">Esperança</option>
+                <option value="santidade">Santidade</option>
+                <option value="amor">Amor de Deus</option>
+                <option value="fidelidade">Fidelidade</option>
+                <option value="segunda_vinda">Segunda vinda</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Intensidade</label>
+              <select name="intensidade" class="input">
+                <option value="">— Selecione —</option>
+                <option value="calma">Calma</option>
+                <option value="media">Média</option>
+                <option value="alta">Agitada</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Referências bíblicas (separadas por vírgula)</label>
+            <input type="text" name="referencias_biblicas" class="input" placeholder="Ex: Salmos 100, João 3:16, Apocalipse 5">
+          </div>
+          <div class="form-group">
+            <label>Versículo-chave</label>
+            <input type="text" name="versiculo_chave" class="input" placeholder="Ex: 'Louvem o Senhor, porque ele é bom' - Salmos 107:1">
+          </div>
+          <div class="form-group">
+            <label>Observações</label>
+            <textarea name="observacoes" class="input" rows="2"></textarea>
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn btn-ghost" data-close>Cancelar</button>
+            <button type="submit" class="btn btn-primary">Salvar</button>
+          </div>
+        </form>
+      </div>
     </div>
   </div>
 
   <script src="/js/api.js"></script>
+  <script src="/js/sidebar.js"></script>
   <script src="/js/songs.js"></script>
 </body>
 </html>
