@@ -6,7 +6,7 @@
 
   const params = new URLSearchParams(location.search);
   const vsId = params.get('vs');
-  const musicaId = params.get('musica');
+  const musicaId = params.get('música');
   const scheduleId = params.get('schedule');
   const instrumento = params.get('instrumento');
 
@@ -47,13 +47,13 @@
 
   async function init() {
     if (!vsId) {
-      showError('ID do multitrack nao fornecido. Use ?vs=ID');
+      showError('ID do multitrack não fornecido. Use ?vs=ID');
       return;
     }
     try {
       const tracks = await API.get(`/multitracks?vs_id=${vsId}`);
       if (!tracks || tracks.length === 0) {
-        showError('Este VS nao tem faixas cadastradas.');
+        showError('Este VS não tem faixas cadastradas.');
         return;
       }
       state.tracks = tracks;
@@ -61,8 +61,8 @@
       state.soloTracks = new Set(savedPrefs.solo || []);
 
       const vs = await API.get(`/vs/${vsId}`).catch(() => null);
-      const titulo = vs?.nome || 'Multitrack';
-      document.getElementById('mt-title').textContent = titulo;
+      const título = vs?.nome || 'Multitrack';
+      document.getElementById('mt-title').textContent = título;
       document.getElementById('mt-subtitle').textContent = `${tracks.length} faixas sincronizadas`;
 
       await loadAllTracks();
@@ -365,5 +365,9 @@
     });
   }
 
-  document.addEventListener('DOMContentLoaded', init);
+  document.addEventListener('DOMContentLoaded', async () => {
+    const user = await requireAuth();
+    if (!user) return;
+    init();
+  });
 })();

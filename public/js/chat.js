@@ -54,7 +54,7 @@ async function loadMembers() {
       <div class="avatar">${(m.nome || 'U').charAt(0).toUpperCase()}</div>
       <div class="member-info">
         <strong>${escapeHtml(m.nome)}</strong>
-        <small>${escapeHtml(m.funcao || m.perfil || '')}</small>
+        <small>${escapeHtml(m.função || m.perfil || '')}</small>
       </div>
     </li>
   `).join('');

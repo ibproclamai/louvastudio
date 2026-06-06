@@ -101,6 +101,22 @@ router.get('/members', authRequired, async (req, res, next) => {
   } catch (e) { next(e); }
 });
 
+router.delete('/messages/:id', authRequired, async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const rows = await sheets.readSheet('ChatMessages');
+    const items = rowsToObjects(rows);
+    const msg = items.find(x => x.id === id);
+    if (!msg) return res.status(404).json({ error: 'Mensagem nao encontrada' });
+    const isOwner = msg.remetente_id === req.user.id;
+    const isAdmin = req.user.perfil === 'admin';
+    if (!isOwner && !isAdmin) return res.status(403).json({ error: 'Sem permissao para deletar esta mensagem' });
+    await sheets.deleteRow('ChatMessages', msg._rowIndex);
+    messageCache.clear();
+    res.json({ ok: true });
+  } catch (e) { next(e); }
+});
+
 router.get('/canais', (req, res) => {
   res.json([{ value: CANAL_GERAL, label: 'Geral do Ministerio', icon: '&#127757;' }]);
 });

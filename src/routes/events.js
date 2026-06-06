@@ -73,7 +73,7 @@ router.get('/:id', authRequired, async (req, res, next) => {
   } catch (e) { next(e); }
 });
 
-router.post('/', authRequired, async (req, res, next) => {
+router.post('/', authRequired, adminRequired, async (req, res, next) => {
   try {
     const { data, hora_inicio, hora_fim, tipo, titulo, local, descricao, cor, participantes } = req.body;
     if (!data) return res.status(400).json({ error: 'data eh obrigatoria' });
@@ -99,7 +99,7 @@ router.post('/', authRequired, async (req, res, next) => {
   } catch (e) { next(e); }
 });
 
-router.put('/:id', authRequired, async (req, res, next) => {
+router.put('/:id', authRequired, adminRequired, async (req, res, next) => {
   try {
     const rows = await sheets.readSheet('Eventos');
     const items = rowsToObjects(rows);
@@ -126,7 +126,7 @@ router.put('/:id', authRequired, async (req, res, next) => {
   } catch (e) { next(e); }
 });
 
-router.delete('/:id', authRequired, async (req, res, next) => {
+router.delete('/:id', authRequired, adminRequired, async (req, res, next) => {
   try {
     const rows = await sheets.readSheet('Eventos');
     const items = rowsToObjects(rows);
@@ -143,7 +143,7 @@ router.delete('/:id', authRequired, async (req, res, next) => {
   } catch (e) { next(e); }
 });
 
-router.post('/:id/participantes', authRequired, async (req, res, next) => {
+router.post('/:id/participantes', authRequired, adminRequired, async (req, res, next) => {
   try {
     const { membro_id, funcao } = req.body;
     if (!membro_id) return res.status(400).json({ error: 'membro_id obrigatorio' });
@@ -153,7 +153,7 @@ router.post('/:id/participantes', authRequired, async (req, res, next) => {
   } catch (e) { next(e); }
 });
 
-router.put('/:id/participantes/:partId/confirmar', authRequired, async (req, res, next) => {
+router.put('/:id/participantes/:partId/confirmar', authRequired, adminRequired, async (req, res, next) => {
   try {
     const { confirmado } = req.body;
     const rows = await sheets.readSheet('EventoParticipantes');
@@ -167,7 +167,7 @@ router.put('/:id/participantes/:partId/confirmar', authRequired, async (req, res
   } catch (e) { next(e); }
 });
 
-router.delete('/:id/participantes/:partId', authRequired, async (req, res, next) => {
+router.delete('/:id/participantes/:partId', authRequired, adminRequired, async (req, res, next) => {
   try {
     const rows = await sheets.readSheet('EventoParticipantes');
     const items = rowsToObjects(rows);

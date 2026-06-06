@@ -67,7 +67,7 @@ async function loadMembers() {
   allMembers.forEach(m => {
     const opt = document.createElement('option');
     opt.value = m.id;
-    opt.textContent = `${m.nome}${m.funcao ? ' (' + m.funcao + ')' : ''}`;
+    opt.textContent = `${m.nome}${m.função ? ' (' + m.função + ')' : ''}`;
     sel.appendChild(opt);
   });
 }
@@ -107,7 +107,7 @@ function renderCurrentView() {
 function filteredEventos() {
   return allEventos.filter(e => {
     if (currentFilter && e.tipo !== currentFilter) return false;
-    if (currentSearch && !e.titulo.toLowerCase().includes(currentSearch)) return false;
+    if (currentSearch && !e.título.toLowerCase().includes(currentSearch)) return false;
     return true;
   });
 }
@@ -142,8 +142,8 @@ function renderCalendar() {
       const ev = document.createElement('div');
       ev.className = 'cal-event';
       ev.style.background = e.cor || '#6366f1';
-      ev.textContent = (e.hora_inicio ? e.hora_inicio + ' ' : '') + e.titulo;
-      ev.title = e.titulo;
+      ev.textContent = (e.hora_inicio ? e.hora_inicio + ' ' : '') + e.título;
+      ev.title = e.título;
       ev.addEventListener('click', () => openDetail(e));
       cell.appendChild(ev);
     });
@@ -168,7 +168,7 @@ function renderList() {
           <span class="event-month">${d.toLocaleDateString('pt-BR', { month: 'short' })}</span>
         </div>
         <div class="event-info">
-          <h3>${escapeHtml(e.titulo)}</h3>
+          <h3>${escapeHtml(e.título)}</h3>
           <div class="event-meta">
             <span class="badge" style="background:${e.cor || '#6366f1'}">${escapeHtml(e.tipo)}</span>
             ${e.hora_inicio ? `<span>&#9201; ${escapeHtml(e.hora_inicio)}${e.hora_fim ? ' - ' + escapeHtml(e.hora_fim) : ''}</span>` : ''}
@@ -203,7 +203,7 @@ function renderParticipants() {
   const ul = document.getElementById('participants-list');
   ul.innerHTML = currentParticipants.map((p, i) => {
     const m = allMembers.find(mm => mm.id === p.membro_id);
-    return `<li><span>${escapeHtml(m?.nome || p.membro_id)}${p.funcao ? ' (' + escapeHtml(p.funcao) + ')' : ''}</span>
+    return `<li><span>${escapeHtml(m?.nome || p.membro_id)}${p.função ? ' (' + escapeHtml(p.função) + ')' : ''}</span>
       <button type="button" onclick="removeParticipant(${i})" class="btn-icon">&times;</button></li>`;
   }).join('');
 }
@@ -215,12 +215,12 @@ window.removeParticipant = (i) => {
 
 function addParticipant() {
   const mid = document.getElementById('select-membro').value;
-  const func = document.getElementById('participant-funcao').value;
+  const func = document.getElementById('participant-função').value;
   if (!mid) return toast('Selecione um membro', 'warn');
-  if (currentParticipants.find(p => p.membro_id === mid)) return toast('Ja adicionado', 'warn');
-  currentParticipants.push({ membro_id: mid, funcao: func });
+  if (currentParticipants.find(p => p.membro_id === mid)) return toast('Já adicionado', 'warn');
+  currentParticipants.push({ membro_id: mid, função: func });
   document.getElementById('select-membro').value = '';
-  document.getElementById('participant-funcao').value = '';
+  document.getElementById('participant-função').value = '';
   renderParticipants();
 }
 
@@ -232,9 +232,9 @@ async function saveEvento(e) {
     hora_inicio: document.getElementById('ev-hora-inicio').value,
     hora_fim: document.getElementById('ev-hora-fim').value,
     tipo: document.getElementById('ev-tipo').value,
-    titulo: document.getElementById('ev-titulo').value,
+    título: document.getElementById('ev-título').value,
     local: document.getElementById('ev-local').value,
-    descricao: document.getElementById('ev-descricao').value,
+    descrição: document.getElementById('ev-descrição').value,
     cor: document.getElementById('ev-cor').value,
     participantes: currentParticipants
   };
@@ -245,7 +245,7 @@ async function saveEvento(e) {
         try { await api(`/api/events/${id}/participantes/${p.id}`, { method: 'DELETE' }); } catch {}
       }
       for (const p of currentParticipants) {
-        await api(`/api/events/${id}/participantes`, { method: 'POST', body: JSON.stringify({ membro_id: p.membro_id, funcao: p.funcao }) });
+        await api(`/api/events/${id}/participantes`, { method: 'POST', body: JSON.stringify({ membro_id: p.membro_id, função: p.função }) });
       }
     } else {
       await api('/api/events', { method: 'POST', body: JSON.stringify(data) });
@@ -259,7 +259,7 @@ async function saveEvento(e) {
 }
 
 function openDetail(e) {
-  document.getElementById('detail-title').textContent = e.titulo;
+  document.getElementById('detail-title').textContent = e.título;
   const d = new Date(e.data + 'T00:00:00');
   const dataFmt = d.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' });
   document.getElementById('detail-body').innerHTML = `
@@ -267,9 +267,9 @@ function openDetail(e) {
     ${e.hora_inicio ? `<div class="detail-row"><span class="detail-label">Horario:</span> ${escapeHtml(e.hora_inicio)}${e.hora_fim ? ' - ' + escapeHtml(e.hora_fim) : ''}</div>` : ''}
     ${e.local ? `<div class="detail-row"><span class="detail-label">Local:</span> ${escapeHtml(e.local)}</div>` : ''}
     <div class="detail-row"><span class="detail-label">Tipo:</span> <span class="badge" style="background:${e.cor || '#6366f1'}">${escapeHtml(e.tipo)}</span></div>
-    ${e.descricao ? `<div class="detail-row"><span class="detail-label">Descricao:</span><p>${escapeHtml(e.descricao)}</p></div>` : ''}
+    ${e.descrição ? `<div class="detail-row"><span class="detail-label">Descrição:</span><p>${escapeHtml(e.descrição)}</p></div>` : ''}
     ${e.participantes?.length ? `<h3 style="margin-top:1.5rem">Participantes (${e.participantes.length})</h3>
-      <ul class="participants-display">${e.participantes.map(p => `<li>&#9836; ${escapeHtml(p.membro_nome)}${p.membro_funcao ? ' <small>(' + escapeHtml(p.membro_funcao) + ')</small>' : ''}${p.funcao ? ' - <em>' + escapeHtml(p.funcao) + '</em>' : ''}</li>`).join('')}</ul>` : ''}
+      <ul class="participants-display">${e.participantes.map(p => `<li>&#9836; ${escapeHtml(p.membro_nome)}${p.membro_função ? ' <small>(' + escapeHtml(p.membro_função) + ')</small>' : ''}${p.função ? ' - <em>' + escapeHtml(p.função) + '</em>' : ''}</li>`).join('')}</ul>` : ''}
     <div class="modal-footer">
       <button class="btn btn-ghost" onclick="editEvento('${e.id}')">Editar</button>
       <button class="btn btn-danger" onclick="deleteEvento('${e.id}')">Excluir</button>
@@ -285,16 +285,16 @@ window.editEvento = (id) => {
   if (!e) return;
   document.getElementById('modal-title').textContent = 'Editar Evento';
   document.getElementById('ev-id').value = e.id;
-  document.getElementById('ev-titulo').value = e.titulo;
+  document.getElementById('ev-título').value = e.título;
   document.getElementById('ev-tipo').value = e.tipo;
   document.getElementById('ev-data').value = e.data;
   document.getElementById('ev-hora-inicio').value = e.hora_inicio || '';
   document.getElementById('ev-hora-fim').value = e.hora_fim || '';
   document.getElementById('ev-local').value = e.local || '';
-  document.getElementById('ev-descricao').value = e.descricao || '';
+  document.getElementById('ev-descrição').value = e.descrição || '';
   document.getElementById('ev-cor').value = e.cor || '#6366f1';
   document.getElementById('participants-section').style.display = '';
-  currentParticipants = (e.participantes || []).map(p => ({ membro_id: p.membro_id, funcao: p.funcao }));
+  currentParticipants = (e.participantes || []).map(p => ({ membro_id: p.membro_id, função: p.função }));
   renderParticipants();
   openModal('modal-evento');
 };

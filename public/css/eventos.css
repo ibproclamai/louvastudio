@@ -1,3 +1,46 @@
+/* ========== MODAL / FORM (eventos) ========== */
+#modal-evento .modal-content { max-width: 640px; }
+#modal-evento .modal-body { padding: 1.25rem 1.5rem 1.5rem; }
+#modal-evento .form-group { display: flex; flex-direction: column; gap: 0.35rem; margin-bottom: 0.85rem; }
+#modal-evento .form-group > label { font-size: 0.85rem; font-weight: 500; color: var(--text, #2d3436); }
+#modal-evento .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 0.85rem; }
+#modal-evento .form-row-3 { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 0.75rem; margin-bottom: 0.85rem; }
+#modal-evento .form-group .input,
+#modal-evento .form-group select.input,
+#modal-evento .form-group textarea.input,
+#modal-evento .form-group input[type="date"].input,
+#modal-evento .form-group input[type="time"].input {
+  display: block; width: 100%;
+  padding: 0.7rem 0.9rem;
+  border: 1.5px solid var(--border-strong, #d8dde3);
+  border-radius: var(--radius-sm, 8px);
+  font-size: 0.95rem; font-family: inherit;
+  background: var(--card-solid, #fff);
+  color: var(--text, #2d3436);
+  transition: all 0.2s;
+}
+#modal-evento .form-group .input:focus {
+  outline: none; border-color: var(--primary, #6366f1);
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.12);
+}
+#modal-evento .input-color {
+  width: 56px; height: 40px; padding: 2px;
+  border: 1.5px solid var(--border-strong, #d8dde3);
+  border-radius: var(--radius-sm, 8px);
+  background: var(--card-solid, #fff);
+  cursor: pointer;
+}
+#modal-evento .modal-footer {
+  display: flex; gap: 0.5rem; justify-content: flex-end;
+  padding-top: 1rem; margin-top: 0.5rem;
+  border-top: 1px solid var(--border, #e0e0e0);
+  flex-wrap: wrap;
+}
+@media (max-width: 520px) {
+  #modal-evento .form-row,
+  #modal-evento .form-row-3 { grid-template-columns: 1fr; }
+}
+
 .filter-bar {
   display: flex;
   flex-direction: column;
@@ -78,6 +121,10 @@
 
 .detail-row { display: flex; gap: 0.5rem; margin: 0.5rem 0; line-height: 1.5; }
 .detail-label { font-weight: 600; min-width: 90px; color: var(--text-muted, #636e72); }
+
+/* ========== DETAIL MODAL ========== */
+#modal-detail .modal-content { max-width: 560px; }
+#modal-detail .modal-body { padding: 1.25rem 1.5rem 1.5rem; }
 
 @media (max-width: 640px) {
   .cal-cell { min-height: 60px; }

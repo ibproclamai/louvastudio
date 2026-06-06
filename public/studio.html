@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Estudio - Louva.Studio</title>
+  <title>Estúdio - Louva.Studio</title>
   <meta name="theme-color" content="#6366f1">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -23,14 +23,15 @@
     <div class="nav-menu" id="nav-menu">
       <ul class="nav-links">
         <li><a href="/dashboard.html">Inicio</a></li>
-        <li><a href="/members.html">Membros</a></li>
-        <li><a href="/songs.html">Musicas</a></li>
+        <li><a href="/songs.html">Músicas</a></li>
         <li><a href="/schedules.html">Escalas</a></li>
         <li><a href="/my-schedule.html">Minhas Escalas</a></li>
-        <li class="admin-only hidden"><a href="/studio.html" class="active">Estudio</a></li>
         <li><a href="/eventos.html">Eventos</a></li>
         <li><a href="/chat.html">Chat</a></li>
-        <li class="admin-only"><a href="/relatorios.html">Relatorios</a></li>
+        <li class="admin-only hidden"><a href="/igreja.html">Igreja</a></li>
+        <li class="admin-only hidden"><a href="/members.html">Membros</a></li>
+        <li class="admin-only hidden"><a href="/relatórios.html">Relatórios</a></li>
+        <li data-requires-role="membro" class="member-only"><a href="/studio.html" class="active">Estúdio</a></li>
       </ul>
       <div class="nav-user">
         <span id="user-name" class="user-chip"></span>
@@ -42,28 +43,28 @@
 
   <main class="container">
     <div class="page-header">
-      <h1>Estudio</h1>
+      <h1>Estúdio</h1>
       <span class="badge badge-primary">Admin</span>
     </div>
-    <p class="subtitle">Gerencie Virtual Sound (VS), configuracoes da igreja e usuarios.</p>
+    <p class="subtitle">Gerencie Virtual Sound (VS), configurações da igreja e usuários.</p>
 
     <div class="studio-tabs">
       <button class="studio-tab active" data-stab="vs">Virtual Sound (VS)</button>
       <button class="studio-tab" data-stab="multitrack">Multitracks</button>
-      <button class="studio-tab" data-stab="config">Configuracoes da Igreja</button>
-      <button class="studio-tab" data-stab="users">Usuarios</button>
+      <button class="studio-tab" data-stab="config" data-admin-tab>Configurações da Igreja</button>
+      <button class="studio-tab" data-stab="users" data-admin-tab>Usuários</button>
     </div>
 
     <section id="panel-vs" class="studio-panel">
       <div class="page-header">
         <h2>Trilhas de Virtual Sound</h2>
-        <button id="btn-new-vs" class="btn btn-primary">+ Nova trilha VS</button>
+        <button id="btn-new-vs" class="btn btn-primary" data-admin-only>+ Nova trilha VS</button>
       </div>
 
       <div class="filters filters-row">
         <input type="text" id="search-vs" placeholder="Buscar por nome...">
         <select id="filter-vs-song">
-          <option value="">Todas as musicas</option>
+          <option value="">Todas as músicas</option>
         </select>
         <select id="filter-vs-tipo">
           <option value="">Todos os tipos</option>
@@ -85,18 +86,18 @@
     <section id="panel-multitrack" class="studio-panel hidden">
       <div class="page-header">
         <h2>Multitracks (stems por instrumento)</h2>
-        <button id="btn-new-multitrack" class="btn btn-primary">+ Novo multitrack</button>
+        <button id="btn-new-multitrack" class="btn btn-primary" data-admin-only>+ Novo multitrack</button>
       </div>
 
       <div class="filters filters-row">
         <input type="text" id="search-multitrack" placeholder="Buscar por nome...">
         <select id="filter-multitrack-song">
-          <option value="">Todas as musicas</option>
+          <option value="">Todas as músicas</option>
         </select>
       </div>
 
       <div class="info-box" style="background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.3);border-radius:var(--radius);padding:1rem;margin-bottom:1rem;">
-        <p style="margin:0;font-size:0.9rem;"><strong>&#127911; Como funciona:</strong> Crie um multitrack para uma musica e adicione varias faixas (voz, violao, guitarra, baixo, teclado, bateria, click). No dia do culto, cada musico abre o player no celular e muta o proprio instrumento para tocar junto com a banda.</p>
+        <p style="margin:0;font-size:0.9rem;"><strong>&#127911; Como funciona:</strong> Crie um multitrack para uma música e adicione varias faixas (voz, violao, guitarra, baixo, teclado, bateria, click). No dia do culto, cada musico abre o player no celular e muta o proprio instrumento para tocar junto com a banda.</p>
       </div>
 
       <div id="multitrack-list" class="card-grid">
@@ -106,7 +107,7 @@
 
     <section id="panel-config" class="studio-panel hidden">
       <div class="page-header">
-        <h2>Configuracoes da Igreja</h2>
+        <h2>Configurações da Igreja</h2>
       </div>
       <form id="form-config" class="form config-form">
         <div class="form-row">
@@ -145,14 +146,14 @@
         <label>Versiculo do dia (opcional)
           <textarea name="versiculo" rows="2"></textarea>
         </label>
-        <label>Mensagem do rodape das escalas
-          <textarea name="mensagem_rodape" rows="2"></textarea>
+        <label>Mensagem do rodapé das escalas
+          <textarea name="mensagem_rodapé" rows="2"></textarea>
         </label>
 
         <h3 style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border-strong);">&#9729; Cloudinary (Upload de arquivos)</h3>
         <div class="info-box" style="background:rgba(6,182,212,0.1);border:1px solid rgba(6,182,212,0.3);border-radius:var(--radius);padding:0.75rem;margin-bottom:1rem;">
-          <p style="margin:0 0 0.5rem;font-size:0.85rem;"><strong>Por que?</strong> Para que musicos possam enviar playbacks e stems diretamente pelo app.</p>
-          <p style="margin:0;font-size:0.8rem;color:var(--text-muted);">Crie uma conta gratis em <a href="https://cloudinary.com" target="_blank" style="color:var(--primary)">cloudinary.com</a> (25GB gratis). Va em Settings > Upload > Add upload preset > Signing Mode: <strong>Unsigned</strong>. Depois cole o Cloud Name e o nome do preset aqui.</p>
+          <p style="margin:0 0 0.5rem;font-size:0.85rem;"><strong>Por que?</strong> Para que músicos possam enviar playbacks e stems diretamente pelo app.</p>
+          <p style="margin:0;font-size:0.8rem;color:var(--text-muted);">Crie uma conta grátis em <a href="https://cloudinary.com" target="_blank" style="color:var(--primary)">cloudinary.com</a> (25GB grátis). Vá em Settings > Upload > Add upload preset > Signing Mode: <strong>Unsigned</strong>. Depois cole o Cloud Name e o nome do preset aqui.</p>
         </div>
         <div class="form-row">
           <label>Cloud Name
@@ -163,10 +164,10 @@
           </label>
         </div>
 
-        <h3 style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border-strong);">&#9993; Email (Notificacoes de escala)</h3>
+        <h3 style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border-strong);">&#9993; Email (Notificações de escala)</h3>
         <div class="info-box" style="background:rgba(236,72,153,0.1);border:1px solid rgba(236,72,153,0.3);border-radius:var(--radius);padding:0.75rem;margin-bottom:1rem;">
-          <p style="margin:0 0 0.5rem;font-size:0.85rem;"><strong>Para que?</strong> Ao publicar uma escala, os musicos recebem um email automatico com data, horario, equipe e repertorio.</p>
-          <p style="margin:0;font-size:0.8rem;color:var(--text-muted);">Recomendado: Gmail. Va em <a href="https://myaccount.google.com/apppasswords" target="_blank" style="color:var(--primary)">Conta Google > Senhas de app</a>, gere uma senha para "Outro app" e cole abaixo. Use <code style="background:rgba(0,0,0,0.05);padding:0.1rem 0.3rem;border-radius:3px">smtp.gmail.com</code> como servidor e porta <code style="background:rgba(0,0,0,0.05);padding:0.1rem 0.3rem;border-radius:3px">587</code>.</p>
+          <p style="margin:0 0 0.5rem;font-size:0.85rem;"><strong>Para que?</strong> Ao publicar uma escala, os musicos recebem um email automatico com data, horario, equipe e repertório.</p>
+          <p style="margin:0;font-size:0.8rem;color:var(--text-muted);">Recomendado: Gmail. Vá em <a href="https://myaccount.google.com/apppasswords" target="_blank" style="color:var(--primary)">Conta Google > Senhas de app</a>, gere uma senha para "Outro app" e cole abaixo. Use <code style="background:rgba(0,0,0,0.05);padding:0.1rem 0.3rem;border-radius:3px">smtp.gmail.com</code> como servidor e porta <code style="background:rgba(0,0,0,0.05);padding:0.1rem 0.3rem;border-radius:3px">587</code>.</p>
         </div>
         <div class="form-row">
           <label>Servidor SMTP
@@ -177,7 +178,7 @@
           </label>
         </div>
         <div class="form-row">
-          <label>Usuario (email)
+          <label>Usuário (email)
             <input type="email" name="email_user" placeholder="sua-igreja@gmail.com">
           </label>
           <label>Senha de app
@@ -197,14 +198,14 @@
         </div>
 
         <div class="form-actions">
-          <button type="submit" class="btn btn-primary">Salvar configuracoes</button>
+          <button type="submit" class="btn btn-primary">Salvar configurações</button>
         </div>
       </form>
     </section>
 
     <section id="panel-users" class="studio-panel hidden">
       <div class="page-header">
-        <h2>Usuarios do sistema</h2>
+        <h2>Usuários do sistema</h2>
       </div>
       <div id="users-list" class="card-grid">
         <p class="empty">Carregando...</p>
@@ -220,16 +221,16 @@
       </div>
       <form id="form-multitrack" class="form">
         <input type="hidden" name="id">
-        <label>Musica *
-          <select name="musica_id" required>
-            <option value="">Selecione a musica...</option>
+        <label>Música *
+          <select name="música_id" required>
+            <option value="">Selecione a música...</option>
           </select>
         </label>
         <label>Nome do multitrack *
           <input type="text" name="nome" required placeholder="Ex: Stems oficiais, Backing track por faixas...">
         </label>
-        <label>Descricao
-          <textarea name="descricao" rows="2" placeholder="Informacoes sobre o multitrack..."></textarea>
+        <label>Descrição
+          <textarea name="descrição" rows="2" placeholder="Informações sobre o multitrack..."></textarea>
         </label>
         <div class="form-actions">
           <button type="button" class="btn" data-close>Cancelar</button>
@@ -270,7 +271,7 @@
         </div>
         <div class="field-with-upload">
           <label>URL do audio *
-            <input type="url" name="url" id="track-url" required placeholder="https://...mp3 ou faca upload">
+            <input type="url" name="url" id="track-url" required placeholder="https://...mp3 ou faça upload">
           </label>
           <div id="upload-track-zone"></div>
         </div>
@@ -307,9 +308,9 @@
       </div>
       <form id="form-vs" class="form">
         <input type="hidden" name="id">
-        <label>Musica *
-          <select name="musica_id" required>
-            <option value="">Selecione a musica...</option>
+        <label>Música *
+          <select name="música_id" required>
+            <option value="">Selecione a música...</option>
           </select>
         </label>
         <label>Nome da trilha *
@@ -328,7 +329,7 @@
         </label>
         <div class="field-with-upload">
           <label>URL do audio *
-            <input type="url" name="url" id="vs-url" required placeholder="https://... ou faca upload">
+            <input type="url" name="url" id="vs-url" required placeholder="https://... ou faça upload">
           </label>
           <div id="upload-vs-zone"></div>
         </div>
@@ -340,8 +341,8 @@
             <input type="number" name="bpm" min="0">
           </label>
         </div>
-        <label>Descricao / observacoes
-          <textarea name="descricao" rows="2" placeholder="Ex: backing track oficial, sem guia vocal..."></textarea>
+        <label>Descrição / observações
+          <textarea name="descrição" rows="2" placeholder="Ex: backing track oficial, sem guia vocal..."></textarea>
         </label>
         <div class="form-actions">
           <button type="button" class="btn" data-close>Cancelar</button>

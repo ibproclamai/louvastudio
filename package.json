@@ -7,7 +7,13 @@
     "start": "node server.js",
     "dev": "node --watch server.js"
   },
-  "keywords": ["louvor", "igreja", "ministério", "escalas", "worship"],
+  "keywords": [
+    "louvor",
+    "igreja",
+    "ministério",
+    "escalas",
+    "worship"
+  ],
   "author": "",
   "license": "MIT",
   "dependencies": {
@@ -18,6 +24,6 @@
     "express": "^4.19.2",
     "googleapis": "^144.0.0",
     "jsonwebtoken": "^9.0.2",
-    "nodemailer": "^6.9.13"
+    "nodemailer": "^6.10.1"
   }
 }

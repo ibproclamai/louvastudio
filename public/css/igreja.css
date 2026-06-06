@@ -1,0 +1,17 @@
+.config-form h3 {
+  margin: 1.5rem 0 0.75rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border, #e0e0e0);
+  color: var(--primary, #6366f1);
+  font-size: 1.05rem;
+}
+.config-form h3:first-child { margin-top: 0; }
+.config-form .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+.config-form label { display: block; margin-bottom: 0.75rem; font-size: 0.9rem; font-weight: 500; }
+.config-form input, .config-form textarea, .config-form select {
+  width: 100%;
+  margin-top: 0.25rem;
+}
+@media (max-width: 640px) {
+  .config-form .form-row { grid-template-columns: 1fr; }
+}

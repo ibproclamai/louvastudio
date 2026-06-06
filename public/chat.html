@@ -14,24 +14,25 @@
 <body>
   <nav class="navbar">
     <div class="nav-brand"><a href="/dashboard.html" style="color:inherit;text-decoration:none">Louva.Studio</a></div>
-    <button class="nav-toggle" aria-label="Menu" onclick="window.toggleNav && window.toggleNav()">
+    <button class="nav-toggle" id="nav-toggle" aria-label="Menu">
       <span></span><span></span><span></span>
     </button>
-    <div class="nav-menu">
+    <div class="nav-menu" id="nav-menu">
       <ul class="nav-links">
         <li><a href="/dashboard.html">Inicio</a></li>
+        <li><a href="/songs.html">Músicas</a></li>
         <li><a href="/schedules.html">Escalas</a></li>
-        <li><a href="/my-schedule.html">Minhas</a></li>
-        <li><a href="/songs.html">Musicas</a></li>
-        <li><a href="/members.html">Membros</a></li>
+        <li><a href="/my-schedule.html">Minhas Escalas</a></li>
         <li><a href="/eventos.html">Eventos</a></li>
         <li><a href="/chat.html" class="active">Chat</a></li>
-        <li class="admin-only"><a href="/relatorios.html">Relatorios</a></li>
-        <li class="admin-only"><a href="/studio.html">Estudio</a></li>
+        <li class="admin-only hidden"><a href="/igreja.html">Igreja</a></li>
+        <li class="admin-only hidden"><a href="/members.html">Membros</a></li>
+        <li class="admin-only hidden"><a href="/relatórios.html">Relatórios</a></li>
+        <li data-requires-role="membro" class="member-only"><a href="/studio.html">Estúdio</a></li>
       </ul>
       <div class="nav-user">
         <span id="user-name" class="user-chip"></span>
-        <button id="btn-logout" class="btn btn-ghost btn-sm">Sair</button>
+        <button id="btn-logout" class="btn btn-sm">Sair</button>
       </div>
     </div>
   </nav>
@@ -40,14 +41,14 @@
   <main class="chat-page">
     <aside class="chat-sidebar" id="chat-sidebar">
       <div class="chat-header">
-        <h2>Ministerio</h2>
+        <h2>Ministério</h2>
         <button class="icon-btn" id="btn-close-sidebar" aria-label="Voltar">&larr;</button>
       </div>
       <div class="chat-channel">
         <div class="channel-item active">
           <span class="channel-icon">&#127757;</span>
           <div>
-            <strong>Geral do Ministerio</strong>
+            <strong>Geral do Ministério</strong>
             <small>Todos os membros</small>
           </div>
         </div>
@@ -60,8 +61,8 @@
       <header class="chat-main-header">
         <button class="icon-btn mobile-only" id="btn-open-sidebar" aria-label="Membros">&#9776;</button>
         <div>
-          <h2 id="chat-channel-name">Geral do Ministerio</h2>
-          <small id="chat-channel-info" class="text-muted">Conversa com todo o ministerio</small>
+          <h2 id="chat-channel-name">Geral do Ministério</h2>
+          <small id="chat-channel-info" class="text-muted">Conversa com todo o ministério</small>
         </div>
         <div class="connection-status">
           <span id="conn-dot" class="conn-dot"></span>

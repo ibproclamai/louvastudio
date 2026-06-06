@@ -1,4 +1,4 @@
-const CACHE = 'louva-studio-v6';
+const CACHE = 'louva-studio-v11';
 const SHELL = [
   '/',
   '/index.html',
@@ -11,16 +11,17 @@ const SHELL = [
   '/setup.html',
   '/multitrack.html',
   '/onboarding.html',
-  '/relatorios.html',
+  '/relatórios.html',
   '/eventos.html',
   '/chat.html',
+  '/igreja.html',
   '/manifest.json',
   '/icon.svg',
   '/css/style.css',
   '/css/studio.css',
   '/css/setup.css',
   '/css/multitrack.css',
-  '/css/relatorios.css',
+  '/css/relatórios.css',
   '/css/eventos.css',
   '/css/chat.css',
   '/js/api.js',
@@ -31,10 +32,13 @@ const SHELL = [
   '/js/my-schedule.js',
   '/js/studio.js',
   '/js/multitrack.js',
-  '/js/relatorios.js',
+  '/js/relatórios.js',
   '/js/setup.js',
   '/js/eventos.js',
-  '/js/chat.js'
+  '/js/chat.js',
+  '/js/igreja.js',
+  '/js/dashboard.js',
+  '/css/igreja.css'
 ];
 
 self.addEventListener('install', (e) => {

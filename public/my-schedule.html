@@ -22,14 +22,15 @@
     <div class="nav-menu" id="nav-menu">
       <ul class="nav-links">
         <li><a href="/dashboard.html">Inicio</a></li>
-        <li><a href="/members.html">Membros</a></li>
-        <li><a href="/songs.html">Musicas</a></li>
+        <li><a href="/songs.html">Músicas</a></li>
         <li><a href="/schedules.html">Escalas</a></li>
         <li><a href="/my-schedule.html" class="active">Minhas Escalas</a></li>
-        <li class="admin-only hidden"><a href="/studio.html">Estudio</a></li>
         <li><a href="/eventos.html">Eventos</a></li>
         <li><a href="/chat.html">Chat</a></li>
-        <li class="admin-only"><a href="/relatorios.html">Relatorios</a></li>
+        <li class="admin-only hidden"><a href="/igreja.html">Igreja</a></li>
+        <li class="admin-only hidden"><a href="/members.html">Membros</a></li>
+        <li class="admin-only hidden"><a href="/relatórios.html">Relatórios</a></li>
+        <li data-requires-role="membro" class="member-only"><a href="/studio.html">Estúdio</a></li>
       </ul>
       <div class="nav-user">
         <span id="user-name" class="user-chip"></span>
@@ -41,12 +42,36 @@
 
   <main class="container">
     <h1>Minhas escalas</h1>
-    <p class="subtitle">Confirme sua presenca nas escalas que voce foi convocado</p>
+    <p class="subtitle">Confirme sua presenca nas escalas que você foi convocado</p>
 
     <div id="my-schedules" class="schedule-list">
       <p class="empty">Carregando...</p>
     </div>
   </main>
+
+  <div id="modal-add-song" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Adicionar música à escala</h2>
+        <button class="modal-close" onclick="closeModal('modal-add-song')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="add-song-escala-id">
+        <div class="form-group">
+          <label>Música</label>
+          <select id="song-select" class="input"></select>
+        </div>
+        <div class="form-group">
+          <label>Ordem na escala</label>
+          <input type="number" id="add-song-ordem" class="input" min="1" value="1">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-ghost" onclick="closeModal('modal-add-song')">Cancelar</button>
+          <button type="button" class="btn btn-primary" onclick="saveSongToSchedule()">Adicionar</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <script src="/js/api.js"></script>
   <script src="/js/my-schedule.js"></script>

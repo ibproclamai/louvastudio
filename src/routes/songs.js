@@ -47,7 +47,7 @@ router.get('/:id', authRequired, async (req, res, next) => {
   } catch (e) { next(e); }
 });
 
-router.post('/', authRequired, async (req, res, next) => {
+router.post('/', authRequired, adminRequired, async (req, res, next) => {
   try {
     const { titulo, artista, tom, bpm, cifra_url, video_url, observacoes } = req.body;
     if (!titulo) return res.status(400).json({ error: 'titulo eh obrigatorio' });
@@ -61,7 +61,7 @@ router.post('/', authRequired, async (req, res, next) => {
   } catch (e) { next(e); }
 });
 
-router.put('/:id', authRequired, async (req, res, next) => {
+router.put('/:id', authRequired, adminRequired, async (req, res, next) => {
   try {
     const { id } = req.params;
     const rows = await sheets.readSheet('Musicas');
@@ -86,7 +86,7 @@ router.put('/:id', authRequired, async (req, res, next) => {
   } catch (e) { next(e); }
 });
 
-router.delete('/:id', authRequired, async (req, res, next) => {
+router.delete('/:id', authRequired, adminRequired, async (req, res, next) => {
   try {
     const { id } = req.params;
     const rows = await sheets.readSheet('Musicas');

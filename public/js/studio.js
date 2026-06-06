@@ -2,6 +2,7 @@ let allVS = [];
 let allSongs = [];
 let allUsers = [];
 let currentUser = null;
+let isAdmin = false;
 
 const TIPOS_LABEL = {
   playback: 'Playback',
@@ -14,35 +15,44 @@ const TIPOS_LABEL = {
 };
 
 (async function () {
-  currentUser = await loadUser();
+  currentUser = await requireAuth();
   if (!currentUser) return;
-  if (currentUser.perfil !== 'admin') {
-    document.querySelector('main').innerHTML = '<p class="empty">Acesso restrito a administradores.</p>';
-    return;
-  }
+  window.__currentUser = currentUser;
   setupLogout();
+  setupRoleVisibility(currentUser);
+  isAdmin = currentUser.perfil === 'admin';
 
   document.querySelectorAll('.studio-tab').forEach(tab => {
     tab.addEventListener('click', () => switchTab(tab.dataset.stab));
   });
 
-  document.getElementById('btn-new-vs').addEventListener('click', () => openVSForm());
-  document.getElementById('form-vs').addEventListener('submit', saveVS);
+  if (isAdmin) {
+    document.getElementById('btn-new-vs').addEventListener('click', () => openVSForm());
+    document.getElementById('form-vs').addEventListener('submit', saveVS);
+    document.getElementById('form-config').addEventListener('submit', saveConfig);
+  }
   document.getElementById('search-vs').addEventListener('input', renderVS);
   document.getElementById('filter-vs-song').addEventListener('change', renderVS);
   document.getElementById('filter-vs-tipo').addEventListener('change', renderVS);
-  document.getElementById('form-config').addEventListener('submit', saveConfig);
 
-  await Promise.all([loadSongs(), loadVS(), loadUsers(), loadConfig()]);
+  await loadSongs();
+  await loadVS();
+  if (isAdmin) {
+    await loadUsers();
+    await loadConfig();
+  } else {
+    document.querySelectorAll('[data-admin-tab]').forEach(el => el.classList.add('hidden'));
+    switchTab('vs');
+  }
 
   const params = new URLSearchParams(location.search);
   const songId = params.get('song');
-  if (songId) {
+  if (songId && isAdmin) {
     document.getElementById('filter-vs-song').value = songId;
     renderVS();
     openVSForm();
     setTimeout(() => {
-      const sel = document.querySelector('#form-vs select[name="musica_id"]');
+      const sel = document.querySelector('#form-vs select[name="música_id"]');
       if (sel) sel.value = songId;
     }, 50);
   }
@@ -52,18 +62,20 @@ function switchTab(name) {
   document.querySelectorAll('.studio-tab').forEach(t => t.classList.toggle('active', t.dataset.stab === name));
   document.querySelectorAll('.studio-panel').forEach(p => p.classList.add('hidden'));
   document.getElementById('panel-' + name).classList.remove('hidden');
+  if (name === 'multitrack') loadMultitracks();
+  if (name === 'users') loadUsers();
 }
 
 async function loadSongs() {
   try {
     allSongs = await API.get('/songs');
     const sel = document.getElementById('filter-vs-song');
-    const formSel = document.querySelector('#form-vs select[name="musica_id"]');
-    const opts = '<option value="">Todas as musicas</option>' +
-      allSongs.map(s => `<option value="${s.id}">${escapeHtml(s.titulo)}${s.artista ? ' - ' + escapeHtml(s.artista) : ''}</option>`).join('');
+    const formSel = document.querySelector('#form-vs select[name="música_id"]');
+    const opts = '<option value="">Todas as músicas</option>' +
+      allSongs.map(s => `<option value="${s.id}">${escapeHtml(s.título)}${s.artista ? ' - ' + escapeHtml(s.artista) : ''}</option>`).join('');
     sel.innerHTML = opts;
-    formSel.innerHTML = '<option value="">Selecione a musica...</option>' +
-      allSongs.map(s => `<option value="${s.id}">${escapeHtml(s.titulo)}${s.artista ? ' - ' + escapeHtml(s.artista) : ''}</option>`).join('');
+    formSel.innerHTML = '<option value="">Selecione a música...</option>' +
+      allSongs.map(s => `<option value="${s.id}">${escapeHtml(s.título)}${s.artista ? ' - ' + escapeHtml(s.artista) : ''}</option>`).join('');
   } catch (e) {
     console.error(e);
   }
@@ -84,7 +96,7 @@ function renderVS() {
   const tipoFilter = document.getElementById('filter-vs-tipo').value;
 
   const filtered = allVS.filter(v => {
-    if (songFilter && v.musica_id !== songFilter) return false;
+    if (songFilter && v.música_id !== songFilter) return false;
     if (tipoFilter && v.tipo !== tipoFilter) return false;
     if (q && !(v.nome || '').toLowerCase().includes(q)) return false;
     return true;
@@ -97,27 +109,28 @@ function renderVS() {
   }
 
   container.innerHTML = filtered.map(v => {
-    const song = allSongs.find(s => s.id === v.musica_id);
+    const song = allSongs.find(s => s.id === v.música_id);
     return `
       <div class="card vs-card">
         <div class="vs-card-head">
           <div>
             <div class="vs-card-title">${escapeHtml(v.nome)}</div>
-            <div class="vs-card-song">${song ? escapeHtml(song.titulo) : '(musica removida)'}</div>
+            <div class="vs-card-song">${song ? escapeHtml(song.título) : '(música removida)'}</div>
           </div>
           <span class="badge badge-${escapeHtml(v.tipo)}">${TIPOS_LABEL[v.tipo] || v.tipo}</span>
         </div>
-        ${v.descricao ? `<div class="card-body">${escapeHtml(v.descricao)}</div>` : ''}
+        ${v.descrição ? `<div class="card-body">${escapeHtml(v.descrição)}</div>` : ''}
         <div class="vs-card-meta">
           ${v.tom ? '<span class="badge badge-primary">Tom: ' + escapeHtml(v.tom) + '</span>' : ''}
           ${v.bpm ? '<span class="badge">' + escapeHtml(v.bpm) + ' BPM</span>' : ''}
         </div>
         <audio class="vs-audio" controls preload="none" src="${escapeHtml(v.url)}"></audio>
         <a class="vs-link" href="${escapeHtml(v.url)}" target="_blank">Abrir link original</a>
+        ${isAdmin ? `
         <div class="card-actions">
           <button class="btn btn-sm" onclick="openVSForm('${v.id}')">Editar</button>
           <button class="btn btn-sm btn-danger" onclick="deleteVS('${v.id}')">Excluir</button>
-        </div>
+        </div>` : ''}
       </div>
     `;
   }).join('');
@@ -131,13 +144,13 @@ window.openVSForm = function (id) {
     const v = allVS.find(x => x.id === id);
     if (v) {
       form.id.value = v.id;
-      form.musica_id.value = v.musica_id;
+      form.música_id.value = v.música_id;
       form.nome.value = v.nome || '';
       form.tipo.value = v.tipo || 'playback';
       form.url.value = v.url || '';
       form.tom.value = v.tom || '';
       form.bpm.value = v.bpm || '';
-      form.descricao.value = v.descricao || '';
+      form.descrição.value = v.descrição || '';
     }
   }
   openModal('modal-vs');
@@ -148,13 +161,13 @@ async function saveVS(e) {
   const form = e.target;
   const id = form.id.value;
   const body = {
-    musica_id: form.musica_id.value,
+    música_id: form.música_id.value,
     nome: form.nome.value.trim(),
     tipo: form.tipo.value,
     url: form.url.value.trim(),
     tom: form.tom.value.trim(),
     bpm: form.bpm.value,
-    descricao: form.descricao.value.trim()
+    descrição: form.descrição.value.trim()
   };
   try {
     if (id) await API.put('/vs/' + id, body);
@@ -193,11 +206,11 @@ async function saveConfig(e) {
   e.preventDefault();
   const form = e.target;
   const body = {};
-  ['nome_igreja', 'cidade', 'endereco', 'pastor', 'louvor_responsavel', 'contato', 'whatsapp', 'site', 'logo_url', 'versiculo', 'mensagem_rodape', 'cloudinary_cloud_name', 'cloudinary_upload_preset', 'email_host', 'email_port', 'email_user', 'email_pass', 'email_from_name']
+    ['nome_igreja', 'cidade', 'endereco', 'pastor', 'louvor_responsavel', 'contato', 'whatsapp', 'site', 'logo_url', 'versiculo', 'mensagem_rodape', 'cloudinary_cloud_name', 'cloudinary_upload_preset', 'email_host', 'email_port', 'email_user', 'email_pass', 'email_from_name']
     .forEach(k => { body[k] = form.elements[k]?.value?.trim() || ''; });
   try {
     await API.put('/config', body);
-    alert('Configuracoes salvas com sucesso.');
+    alert('Configurações salvas com sucesso.');
   } catch (err) {
     alert('Erro: ' + err.message);
   }
@@ -237,7 +250,7 @@ async function loadUsers() {
 function renderUsers() {
   const container = document.getElementById('users-list');
   if (allUsers.length === 0) {
-    container.innerHTML = '<p class="empty">Nenhum usuario cadastrado.</p>';
+    container.innerHTML = '<p class="empty">Nenhum usuário cadastrado.</p>';
     return;
   }
   container.innerHTML = allUsers.map(u => `
@@ -259,7 +272,7 @@ function renderUsers() {
           </select>
           <button class="btn btn-sm btn-danger" onclick="deleteUser('${u.id}')">Excluir</button>
         </div>
-      ` : '<small class="empty">Voce nao pode alterar seu proprio perfil aqui.</small>'}
+      ` : '<small class="empty">Você não pode alterar seu proprio perfil aqui.</small>'}
     </div>
   `).join('');
 }
@@ -274,7 +287,7 @@ window.changeUserRole = async function (id, perfil) {
 };
 
 window.deleteUser = async function (id) {
-  if (!confirm('Excluir este usuario?')) return;
+  if (!confirm('Excluir este usuário?')) return;
   try {
     await API.del('/auth/users/' + id);
     await loadUsers();
@@ -297,10 +310,10 @@ async function loadMultitracks() {
 
 function populateMultitrackFilters() {
   const sel = document.getElementById('filter-multitrack-song');
-  const formSel = document.querySelector('#form-multitrack select[name="musica_id"]');
-  const opts = allSongs.map(s => `<option value="${s.id}">${escapeHtml(s.titulo)}${s.artista ? ' - ' + escapeHtml(s.artista) : ''}</option>`).join('');
-  sel.innerHTML = '<option value="">Todas as musicas</option>' + opts;
-  formSel.innerHTML = '<option value="">Selecione a musica...</option>' + opts;
+  const formSel = document.querySelector('#form-multitrack select[name="música_id"]');
+  const opts = allSongs.map(s => `<option value="${s.id}">${escapeHtml(s.título)}${s.artista ? ' - ' + escapeHtml(s.artista) : ''}</option>`).join('');
+  sel.innerHTML = '<option value="">Todas as músicas</option>' + opts;
+  formSel.innerHTML = '<option value="">Selecione a música...</option>' + opts;
 }
 
 function renderMultitracks() {
@@ -308,33 +321,35 @@ function renderMultitracks() {
   const songFilter = document.getElementById('filter-multitrack-song').value;
   const filtered = allMultitracks.filter(v => {
     if (v.tipo !== 'multitrack') return false;
-    if (songFilter && v.musica_id !== songFilter) return false;
+    if (songFilter && v.música_id !== songFilter) return false;
     if (q && !(v.nome || '').toLowerCase().includes(q)) return false;
     return true;
   });
 
   const container = document.getElementById('multitrack-list');
   if (filtered.length === 0) {
-    container.innerHTML = '<p class="empty">Nenhum multitrack cadastrado. Clique em "+ Novo multitrack" para comecar.</p>';
+    container.innerHTML = '<p class="empty">Nenhum multitrack cadastrado. Clique em "+ Novo multitrack" para começar.</p>';
     return;
   }
 
   container.innerHTML = filtered.map(v => {
-    const song = allSongs.find(s => s.id === v.musica_id);
+    const song = allSongs.find(s => s.id === v.música_id);
     return `
       <div class="card vs-card">
         <div class="vs-card-head">
           <div>
             <div class="vs-card-title">${escapeHtml(v.nome)}</div>
-            <div class="vs-card-song">${song ? escapeHtml(song.titulo) : '(musica removida)'}</div>
+            <div class="vs-card-song">${song ? escapeHtml(song.título) : '(música removida)'}</div>
           </div>
           <span class="badge badge-multitrack">Multitrack</span>
         </div>
-        ${v.descricao ? `<div class="card-body">${escapeHtml(v.descricao)}</div>` : ''}
+        ${v.descrição ? `<div class="card-body">${escapeHtml(v.descrição)}</div>` : ''}
         <div class="card-actions">
-          <button class="btn btn-sm btn-primary" onclick="openTracksModal('${v.id}')">Gerenciar faixas</button>
-          <a class="btn btn-sm" href="/multitrack.html?vs=${v.id}" target="_blank">&#9654; Abrir Player</a>
+          <a class="btn btn-sm btn-primary" href="/multitrack.html?vs=${v.id}">&#9654; Abrir Player</a>
+          ${isAdmin ? `
+          <button class="btn btn-sm" onclick="openTracksModal('${v.id}')">Gerenciar faixas</button>
           <button class="btn btn-sm btn-danger" onclick="deleteVS('${v.id}')">Excluir</button>
+          ` : ''}
         </div>
       </div>
     `;
@@ -349,9 +364,9 @@ window.openMultitrackForm = function (id) {
     const v = allMultitracks.find(x => x.id === id);
     if (v) {
       form.id.value = v.id;
-      form.musica_id.value = v.musica_id;
+      form.música_id.value = v.música_id;
       form.nome.value = v.nome || '';
-      form.descricao.value = v.descricao || '';
+      form.descrição.value = v.descrição || '';
     }
   }
   openModal('modal-multitrack');
@@ -362,11 +377,11 @@ async function saveMultitrack(e) {
   const form = e.target;
   const id = form.id.value;
   const body = {
-    musica_id: form.musica_id.value,
+    música_id: form.música_id.value,
     nome: form.nome.value.trim(),
     tipo: 'multitrack',
     url: 'multitrack://' + (id || 'new'),
-    descricao: form.descricao.value.trim()
+    descrição: form.descrição.value.trim()
   };
   try {
     let vsId;
@@ -499,60 +514,3 @@ function setupTrackFormUploads() {
     }));
   }
 }
-
-const _origOpenVSForm = window.openVSForm;
-window.openVSForm = function (id) {
-  _origOpenVSForm(id);
-  setupVSFormUploads();
-};
-const _origOpenTracks = window.openTracksModal;
-window.openTracksModal = function (vsId) {
-  _origOpenTracks(vsId);
-  setupTrackFormUploads();
-};
-
-const _origSwitchTab = switchTab;
-window._switchTabImpl = function (name) {
-  _origSwitchTab(name);
-  if (name === 'multitrack') loadMultitracks();
-};
-document.querySelectorAll('.studio-tab').forEach(tab => {
-  tab.addEventListener('click', () => window._switchTabImpl(tab.dataset.stab));
-});
-
-const _origRenderVS = window.renderVS || renderVS;
-renderVS = function () {
-  _origRenderVS();
-  if (typeof renderMultitracks === 'function') renderMultitracks();
-};
-
-(async function () {
-  currentUser = await loadUser();
-  if (!currentUser) return;
-  if (currentUser.perfil !== 'admin') {
-    document.querySelector('main').innerHTML = '<p class="empty">Acesso restrito a administradores.</p>';
-    return;
-  }
-  setupLogout();
-
-  document.getElementById('btn-new-vs').addEventListener('click', () => openVSForm());
-  document.getElementById('form-vs').addEventListener('submit', saveVS);
-  document.getElementById('search-vs').addEventListener('input', renderVS);
-  document.getElementById('filter-vs-song').addEventListener('change', renderVS);
-  document.getElementById('filter-vs-tipo').addEventListener('change', renderVS);
-  document.getElementById('form-config').addEventListener('submit', saveConfig);
-
-  await Promise.all([loadSongs(), loadVS(), loadUsers(), loadConfig()]);
-
-  const params = new URLSearchParams(location.search);
-  const songId = params.get('song');
-  if (songId) {
-    document.getElementById('filter-vs-song').value = songId;
-    renderVS();
-    openVSForm();
-    setTimeout(() => {
-      const sel = document.querySelector('#form-vs select[name="musica_id"]');
-      if (sel) sel.value = songId;
-    }, 50);
-  }
-})();

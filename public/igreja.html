@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1,user-scalable=no">
+  <meta name="theme-color" content="#6366f1">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" type="image/svg+xml" href="/icon.svg">
+  <link rel="apple-touch-icon" href="/icon.svg">
+  <title>Cadastrar Igreja - Louva.Studio</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/igreja.css">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-brand">Louva.Studio</div>
+    <button class="nav-toggle" id="nav-toggle" aria-label="Menu" onclick="window.toggleNav && window.toggleNav()">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="nav-menu" id="nav-menu">
+      <ul class="nav-links">
+        <li><a href="/dashboard.html">Inicio</a></li>
+        <li><a href="/songs.html">Músicas</a></li>
+        <li><a href="/schedules.html">Escalas</a></li>
+        <li><a href="/my-schedule.html">Minhas Escalas</a></li>
+        <li><a href="/eventos.html">Eventos</a></li>
+        <li><a href="/chat.html">Chat</a></li>
+        <li class="admin-only hidden"><a href="/igreja.html" class="active">Igreja</a></li>
+        <li class="admin-only hidden"><a href="/members.html">Membros</a></li>
+        <li class="admin-only hidden"><a href="/relatórios.html">Relatórios</a></li>
+        <li data-requires-role="membro" class="member-only"><a href="/studio.html">Estúdio</a></li>
+      </ul>
+      <div class="nav-user">
+        <span id="user-name" class="user-chip"></span>
+        <button id="btn-logout" class="btn btn-sm">Sair</button>
+      </div>
+    </div>
+  </nav>
+  <div id="nav-overlay" class="nav-overlay"></div>
+
+  <main class="container">
+    <div class="page-header">
+      <h1>Cadastrar Igreja</h1>
+      <p class="subtitle">Preencha os dados da sua igreja para começar a usar o sistema.</p>
+    </div>
+
+    <form id="form-igreja" class="form config-form">
+      <h3>Dados principais</h3>
+      <label>Nome da Igreja *
+        <input type="text" name="nome_igreja" required placeholder="Ex: Igreja Batista Central">
+      </label>
+      <label>Cidade
+        <input type="text" name="cidade" placeholder="São Paulo, SP">
+      </label>
+      <label>Endereco
+        <input type="text" name="endereco" placeholder="Rua, número, bairro">
+      </label>
+
+      <h3>Lideranca</h3>
+      <div class="form-row">
+        <label>Pastor
+          <input type="text" name="pastor" placeholder="Nome do pastor">
+        </label>
+        <label>Lider de Louvor
+          <input type="text" name="louvor_responsavel" placeholder="Nome do lider">
+        </label>
+      </div>
+
+      <h3>Contato</h3>
+      <div class="form-row">
+        <label>Telefone
+          <input type="text" name="contato" placeholder="(11) 1234-5678">
+        </label>
+        <label>WhatsApp
+          <input type="text" name="whatsapp" placeholder="(11) 91234-5678">
+        </label>
+      </div>
+      <label>Site
+        <input type="url" name="site" placeholder="https://sua-igreja.com">
+      </label>
+      <label>URL do Logo
+        <input type="url" name="logo_url" placeholder="https://...">
+      </label>
+
+      <h3>Mensagens</h3>
+      <label>Versiculo do dia
+        <textarea name="versiculo" rows="2" placeholder="Ex: 'Louvai ao Senhor, porque ele é bom' - Salmos 107:1"></textarea>
+      </label>
+      <label>Mensagem do rodapé das escalas
+        <textarea name="mensagem_rodape" rows="2" placeholder="Ex: 'Que o louvor seja para a glória de Deus!'"></textarea>
+      </label>
+
+      <div class="form-actions">
+        <button type="button" class="btn" id="btn-cancel">Cancelar</button>
+        <button type="submit" class="btn btn-primary" id="btn-save">Salvar e ir para o sistema</button>
+      </div>
+    </form>
+  </main>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/igreja.js"></script>
+</body>
+</html>

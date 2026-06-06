@@ -17,21 +17,22 @@
     <button class="nav-toggle" aria-label="Menu" onclick="window.toggleNav && window.toggleNav()">
       <span></span><span></span><span></span>
     </button>
-    <div class="nav-menu">
+    <div class="nav-menu" id="nav-menu">
       <ul class="nav-links">
         <li><a href="/dashboard.html">Inicio</a></li>
+        <li><a href="/songs.html">Músicas</a></li>
         <li><a href="/schedules.html">Escalas</a></li>
-        <li><a href="/my-schedule.html">Minhas</a></li>
-        <li><a href="/songs.html">Musicas</a></li>
-        <li><a href="/members.html">Membros</a></li>
+        <li><a href="/my-schedule.html">Minhas Escalas</a></li>
         <li><a href="/eventos.html" class="active">Eventos</a></li>
         <li><a href="/chat.html">Chat</a></li>
-        <li class="admin-only"><a href="/relatorios.html">Relatorios</a></li>
-        <li class="admin-only"><a href="/studio.html">Estudio</a></li>
+        <li class="admin-only hidden"><a href="/igreja.html">Igreja</a></li>
+        <li class="admin-only hidden"><a href="/members.html">Membros</a></li>
+        <li class="admin-only hidden"><a href="/relatórios.html">Relatórios</a></li>
+        <li data-requires-role="membro" class="member-only"><a href="/studio.html">Estúdio</a></li>
       </ul>
       <div class="nav-user">
         <span id="user-name" class="user-chip"></span>
-        <button id="btn-logout" class="btn btn-ghost btn-sm">Sair</button>
+        <button id="btn-logout" class="btn btn-sm">Sair</button>
       </div>
     </div>
   </nav>
@@ -40,18 +41,18 @@
   <main class="page-container">
     <header class="page-header">
       <h1>Eventos</h1>
-      <button id="btn-new-event" class="btn btn-primary">+ Novo Evento</button>
+      <button id="btn-new-event" class="btn btn-primary" data-admin-only>+ Novo Evento</button>
     </header>
 
     <div class="filter-bar">
       <div class="filter-chips" id="filter-tipos"></div>
       <div class="filter-search">
-        <input type="text" id="search-input" placeholder="Buscar por titulo..." class="input">
+        <input type="text" id="search-input" placeholder="Buscar por título..." class="input">
       </div>
     </div>
 
     <div class="view-toggle">
-      <button class="view-btn active" data-view="calendar">Calendario</button>
+      <button class="view-btn active" data-view="calendar">Calendário</button>
       <button class="view-btn" data-view="list">Lista</button>
     </div>
 
@@ -82,15 +83,15 @@
         <input type="hidden" id="ev-id">
         <div class="form-row">
           <div class="form-group">
-            <label>Titulo *</label>
-            <input type="text" id="ev-titulo" class="input" required>
+            <label>Título *</label>
+            <input type="text" id="ev-título" class="input" required>
           </div>
           <div class="form-group">
             <label>Tipo *</label>
             <select id="ev-tipo" class="input" required></select>
           </div>
         </div>
-        <div class="form-row">
+        <div class="form-row-3">
           <div class="form-group">
             <label>Data *</label>
             <input type="date" id="ev-data" class="input" required>
@@ -109,8 +110,8 @@
           <input type="text" id="ev-local" class="input" placeholder="Ex: Templo principal, Sala 3...">
         </div>
         <div class="form-group">
-          <label>Descricao</label>
-          <textarea id="ev-descricao" class="input" rows="3"></textarea>
+          <label>Descrição</label>
+          <textarea id="ev-descrição" class="input" rows="3"></textarea>
         </div>
         <div class="form-group">
           <label>Cor</label>
@@ -120,7 +121,7 @@
           <label>Participantes</label>
           <div class="participants-input">
             <select id="select-membro" class="input"><option value="">Selecione um membro...</option></select>
-            <input type="text" id="participant-funcao" class="input" placeholder="Funcao (opcional)">
+            <input type="text" id="participant-função" class="input" placeholder="Função (opcional)">
             <button type="button" id="btn-add-participant" class="btn btn-ghost">Adicionar</button>
           </div>
           <ul id="participants-list" class="participants-list"></ul>

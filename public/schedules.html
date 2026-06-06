@@ -22,14 +22,15 @@
     <div class="nav-menu" id="nav-menu">
       <ul class="nav-links">
         <li><a href="/dashboard.html">Inicio</a></li>
-        <li><a href="/members.html">Membros</a></li>
-        <li><a href="/songs.html">Musicas</a></li>
+        <li><a href="/songs.html">Músicas</a></li>
         <li><a href="/schedules.html" class="active">Escalas</a></li>
         <li><a href="/my-schedule.html">Minhas Escalas</a></li>
-        <li class="admin-only hidden"><a href="/studio.html">Estudio</a></li>
         <li><a href="/eventos.html">Eventos</a></li>
         <li><a href="/chat.html">Chat</a></li>
-        <li class="admin-only"><a href="/relatorios.html">Relatorios</a></li>
+        <li class="admin-only hidden"><a href="/igreja.html">Igreja</a></li>
+        <li class="admin-only hidden"><a href="/members.html">Membros</a></li>
+        <li class="admin-only hidden"><a href="/relatórios.html">Relatórios</a></li>
+        <li data-requires-role="membro" class="member-only"><a href="/studio.html">Estúdio</a></li>
       </ul>
       <div class="nav-user">
         <span id="user-name" class="user-chip"></span>
@@ -43,7 +44,7 @@
     <div class="page-header">
       <h1>Escalas de cultos</h1>
       <div style="display:flex;gap:0.5rem;flex-wrap:wrap">
-        <button id="btn-new-schedule" class="btn btn-primary admin-only hidden">+ Nova escala</button>
+        <button id="btn-new-schedule" class="btn btn-primary" data-admin-only>+ Nova escala</button>
       </div>
     </div>
 
@@ -78,11 +79,11 @@
           <label>Tipo
             <select name="tipo_culto">
               <option value="">Selecione...</option>
-              <option>Culto Dominical - Manha</option>
+              <option>Culto Dominical - Manhã</option>
               <option>Culto Dominical - Noite</option>
-              <option>Culto de Oracao</option>
+              <option>Culto de Oração</option>
               <option>Culto de Jovens</option>
-              <option>Culto de Criancas</option>
+              <option>Culto de Crianças</option>
               <option>Ensaio</option>
               <option>Evento Especial</option>
               <option>Outro</option>
@@ -100,8 +101,8 @@
             </select>
           </label>
         </div>
-        <label>Observacoes
-          <textarea name="observacoes" rows="2"></textarea>
+        <label>Observações
+          <textarea name="observações" rows="2"></textarea>
         </label>
 
         <fieldset>
@@ -113,11 +114,11 @@
         </fieldset>
 
         <fieldset>
-          <legend>Musicas da escala</legend>
+          <legend>Músicas da escala</legend>
           <div id="schedule-songs" class="song-picker">
-            <p class="empty">Carregando musicas...</p>
+            <p class="empty">Carregando músicas...</p>
           </div>
-          <button type="button" id="btn-add-song" class="btn btn-sm">+ Adicionar musica</button>
+          <button type="button" id="btn-add-song" class="btn btn-sm">+ Adicionar música</button>
         </fieldset>
 
         <div class="form-actions">

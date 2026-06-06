@@ -16,7 +16,7 @@ const API = {
       if (!location.pathname.endsWith('/') && !location.pathname.endsWith('index.html') && !location.pathname.endsWith('setup.html')) {
         location.href = '/';
       }
-      throw new Error('Nao autenticado');
+      throw new Error('Não autenticado');
     }
     const data = await res.json().catch(() => ({}));
     if (!res.ok) throw new Error(data.error || `Erro ${res.status}`);
@@ -42,9 +42,59 @@ async function loadUser() {
 }
 
 function setupAdminVisibility(user) {
-  if (user && user.perfil === 'admin') {
+  if (!user) return;
+  if (user.perfil === 'admin') {
     document.querySelectorAll('.admin-only').forEach(el => el.classList.remove('hidden'));
   }
+}
+
+function setupRoleVisibility(user) {
+  if (!user) return;
+  const isAdmin = user.perfil === 'admin';
+  document.querySelectorAll('.member-only').forEach(el => el.classList.remove('hidden'));
+  document.querySelectorAll('[data-requires-role="membro"]').forEach(el => el.classList.remove('hidden'));
+  if (!isAdmin) {
+    document.querySelectorAll('[data-admin-only]').forEach(el => el.classList.add('hidden'));
+  }
+}
+
+function isAdmin() {
+  const cached = (window.__currentUser || {}).perfil;
+  return cached === 'admin';
+}
+
+function requireRole(allowed) {
+  return async function () {
+    const user = await requireAuth();
+    if (!user) return null;
+    const roles = Array.isArray(allowed) ? allowed : [allowed];
+    if (!roles.includes(user.perfil)) {
+      toast('Acesso restrito', 'error');
+      setTimeout(() => location.href = '/dashboard.html', 1000);
+      return null;
+    }
+    return user;
+  };
+}
+
+async function requireAuth() {
+  if (!API.getToken()) { location.href = '/'; return null; }
+  try {
+    const { user } = await API.get('/auth/me');
+    return user;
+  } catch (e) {
+    API.clearToken();
+    location.href = '/';
+    return null;
+  }
+}
+
+function showUserName(user) {
+  if (!user) return;
+  document.querySelectorAll('.user-chip').forEach(el => el.textContent = user.nome);
+  const first = (user.nome || '').split(' ')[0] || user.nome;
+  const welcome = document.getElementById('welcome-name');
+  if (welcome) welcome.textContent = first;
 }
 
 function setupLogout() {
@@ -53,7 +103,7 @@ function setupLogout() {
     btn.addEventListener('click', async () => {
       try { await API.post('/auth/logout', {}); } catch (e) {}
       API.clearToken();
-      toast('Ate logo!', 'info');
+      toast('Até logo!', 'info');
       setTimeout(() => location.href = '/', 400);
     });
   }
@@ -121,7 +171,7 @@ function openYouTube(url) {
     <div class="yt-modal-content">
       <button class="yt-modal-close" aria-label="Fechar">&times;</button>
       <iframe src="https://www.youtube.com/embed/${id}?autoplay=1&rel=0" 
-              allow="autoplay; encrypted-media" allowfullscreen
+              allow="autoplay; encrypted-média" allowfullscreen
               frameborder="0"></iframe>
     </div>
   `;
@@ -148,7 +198,7 @@ async function copyText(text, label = 'Link') {
     document.body.appendChild(ta);
     ta.select();
     try { document.execCommand('copy'); toast(`${label} copiado!`, 'success', 2000); }
-    catch (err) { toast('Nao foi possivel copiar', 'error'); }
+    catch (err) { toast('Não foi possivel copiar', 'error'); }
     ta.remove();
   }
 }
@@ -171,7 +221,7 @@ async function getCloudinaryConfig() {
 async function uploadToCloudinary(file, opts = {}) {
   const cfg = await getCloudinaryConfig();
   if (!cfg.cloudName || !cfg.uploadPreset) {
-    throw new Error('Cloudinary nao configurado. Va em Estúdio > Configuracoes da Igreja e preencha Cloud Name e Upload Preset.');
+    throw new Error('Cloudinary não configurado. Vá em Estúdio > Configurações da Igreja e preencha Cloud Name e Upload Preset.');
   }
   const formData = new FormData();
   formData.append('file', file);
@@ -192,7 +242,7 @@ async function uploadToCloudinary(file, opts = {}) {
         try {
           const data = JSON.parse(xhr.responseText);
           resolve({ url: data.secure_url, publicId: data.public_id, duration: data.duration, format: data.format });
-        } catch (e) { reject(new Error('Resposta invalida do Cloudinary')); }
+        } catch (e) { reject(new Error('Resposta inválida do Cloudinary')); }
       } else {
         try {
           const err = JSON.parse(xhr.responseText);
@@ -289,6 +339,25 @@ document.addEventListener('click', e => {
     if (m) m.classList.add('hidden');
   }
 });
+
+window.toggleNav = function() {
+  const toggle = document.getElementById('nav-toggle');
+  const menu = document.getElementById('nav-menu');
+  const overlay = document.getElementById('nav-overlay');
+  if (!menu) return;
+  const isOpen = menu.classList.contains('open');
+  if (isOpen) {
+    if (toggle) toggle.classList.remove('open');
+    menu.classList.remove('open');
+    if (overlay) overlay.classList.remove('show');
+    document.body.style.overflow = '';
+  } else {
+    if (toggle) toggle.classList.add('open');
+    menu.classList.add('open');
+    if (overlay) overlay.classList.add('show');
+    document.body.style.overflow = 'hidden';
+  }
+};
 
 document.addEventListener('DOMContentLoaded', () => {
   setupNavToggle();

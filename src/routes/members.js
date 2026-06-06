@@ -23,7 +23,7 @@ router.get('/', authRequired, async (req, res, next) => {
   } catch (e) { next(e); }
 });
 
-router.post('/', authRequired, async (req, res, next) => {
+router.post('/', authRequired, adminRequired, async (req, res, next) => {
   try {
     const { nome, funcao, telefone, email, disponibilidade, ativo } = req.body;
     if (!nome) return res.status(400).json({ error: 'nome eh obrigatorio' });
@@ -37,7 +37,7 @@ router.post('/', authRequired, async (req, res, next) => {
   } catch (e) { next(e); }
 });
 
-router.put('/:id', authRequired, async (req, res, next) => {
+router.put('/:id', authRequired, adminRequired, async (req, res, next) => {
   try {
     const { id } = req.params;
     const rows = await sheets.readSheet('Membros');
@@ -61,7 +61,7 @@ router.put('/:id', authRequired, async (req, res, next) => {
   } catch (e) { next(e); }
 });
 
-router.delete('/:id', authRequired, async (req, res, next) => {
+router.delete('/:id', authRequired, adminRequired, async (req, res, next) => {
   try {
     const { id } = req.params;
     const rows = await sheets.readSheet('Membros');

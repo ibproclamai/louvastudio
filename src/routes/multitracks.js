@@ -43,7 +43,7 @@ router.get('/:id', async (req, res, next) => {
   } catch (e) { next(e); }
 });
 
-router.post('/', adminRequired, async (req, res, next) => {
+router.post('/', authRequired, adminRequired, async (req, res, next) => {
   try {
     const { vs_id, instrumento, label, url, ordem, volume_padrao, mutado_padrao } = req.body;
     if (!vs_id || !url) return res.status(400).json({ error: 'vs_id e url sao obrigatorios' });
@@ -63,7 +63,7 @@ router.post('/', adminRequired, async (req, res, next) => {
   } catch (e) { next(e); }
 });
 
-router.put('/:id', adminRequired, async (req, res, next) => {
+router.put('/:id', authRequired, adminRequired, async (req, res, next) => {
   try {
     const rows = await sheets.readSheet('MultitrackTracks', 'A1:Z1000');
     if (rows.length < 2) return res.status(404).json({ error: 'Track nao encontrada' });
@@ -90,7 +90,7 @@ router.put('/:id', adminRequired, async (req, res, next) => {
   } catch (e) { next(e); }
 });
 
-router.delete('/:id', adminRequired, async (req, res, next) => {
+router.delete('/:id', authRequired, adminRequired, async (req, res, next) => {
   try {
     const rows = await sheets.readSheet('MultitrackTracks', 'A1:Z1000');
     const rowIndex = rows.findIndex((r, i) => i > 0 && r[0] === req.params.id);

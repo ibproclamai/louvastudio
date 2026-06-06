@@ -18,7 +18,7 @@ async function checkStatus() {
 
   bar.className = 'status-bar checking';
   icon.innerHTML = '&#8987;';
-  text.textContent = 'Verificando configuracao...';
+  text.textContent = 'Verificando configuração...';
 
   try {
     const s = await fetch('/api/setup/status').then(r => r.json());
@@ -36,10 +36,10 @@ function updateUI(s) {
   const text = document.getElementById('status-text');
   const goLogin = document.getElementById('go-login');
 
-  setStep('node_modules', s.node_modules, s.node_modules ? 'Dependencias instaladas' : 'Dependencias nao instaladas - rode o iniciar.bat');
-  setStep('credentials_file', s.credentials_file, s.credentials_file ? 'Arquivo credentials.json encontrado' : 'Arquivo credentials.json nao encontrado na pasta do projeto');
-  setStep('sheet_id', s.sheet_id, s.sheet_id ? 'GOOGLE_SHEET_ID configurado' : 'GOOGLE_SHEET_ID nao configurado no .env');
-  setStep('jwt_secret', s.jwt_secret, s.jwt_secret ? 'JWT_SECRET configurado' : 'JWT_SECRET nao foi alterado (ainda usa valor padrao)');
+  setStep('node_modules', s.node_modules, s.node_modules ? 'Dependencias instaladas' : 'Dependencias não instaladas - rode o iniciar.bat');
+  setStep('credentials_file', s.credentials_file, s.credentials_file ? 'Arquivo credentials.json encontrado' : 'Arquivo credentials.json não encontrado na pasta do projeto');
+  setStep('sheet_id', s.sheet_id, s.sheet_id ? 'GOOGLE_SHEET_ID configurado' : 'GOOGLE_SHEET_ID não configurado no .env');
+  setStep('jwt_secret', s.jwt_secret, s.jwt_secret ? 'JWT_SECRET configurado' : 'JWT_SECRET não foi alterado (ainda usa valor padrao)');
 
   if (s.configured) {
     bar.className = 'status-bar ok';

@@ -1,14 +1,16 @@
 (async function () {
-  const user = await loadUser();
+  const user = await requireAuth();
   if (!user) return;
+  window.__currentUser = user;
   setupLogout();
-  setupAdminVisibility(user);
+  setupRoleVisibility(user);
+  isAdminUser = user.perfil === 'admin';
 
   try {
     const items = await API.get('/confirmations/minhas');
     const container = document.getElementById('my-schedules');
     if (items.length === 0) {
-      container.innerHTML = '<p class="empty">Voce nao esta em nenhuma escala. Peca ao administrador para inclui-lo.</p>';
+      container.innerHTML = '<p class="empty">Você não está em nenhuma escala. Peça ao administrador para incluí-lo.</p>';
       return;
     }
     const today = new Date().toISOString().slice(0, 10);
@@ -18,7 +20,7 @@
 
     container.innerHTML = '';
     if (upcoming.length > 0) {
-      container.innerHTML += '<h2 class="section" style="margin-top:0">Proximas</h2>' + upcoming.map(renderItem).join('');
+      container.innerHTML += '<h2 class="section" style="margin-top:0">Próximas</h2>' + upcoming.map(renderItem).join('');
     }
     if (past.length > 0) {
       container.innerHTML += '<h2 class="section">Passadas</h2>' + past.map(renderItem).join('');
@@ -27,6 +29,10 @@
     document.getElementById('my-schedules').innerHTML = `<p class="empty">Erro: ${escapeHtml(err.message)}</p>`;
   }
 })();
+
+let isAdminUser = false;
+let allSongs = [];
+let currentScheduleMusicas = [];
 
 function renderItem(item) {
   const d = new Date(item.data_culto + 'T00:00:00');
@@ -42,15 +48,19 @@ function renderItem(item) {
         </div>
         <div class="schedule-info">
           <h3>${escapeHtml(item.tipo_culto || 'Culto')}</h3>
-          <p>${item.local ? escapeHtml(item.local) + ' &middot; ' : ''}${escapeHtml(item.funcao_na_escala || 'Equipe')}</p>
+          <p>${item.local ? escapeHtml(item.local) + ' &middot; ' : ''}${escapeHtml(item.funcação_na_escala || 'Equipe')}</p>
           <p>${renderConfirmBadge(item.confirmado)}</p>
         </div>
       </div>
+      <div class="schedule-musicas" id="musicas-${item.escala_id}">
+        <p class="empty" style="margin:0.5rem 0;font-size:0.85rem;">Carregando músicas...</p>
+      </div>
       ${!isPast ? `
-        <div class="confirm-buttons">
-          <button class="btn btn-success btn-sm" onclick="confirm('${item.id}','confirmado')" ${item.confirmado === 'confirmado' ? 'disabled' : ''}>Vou estar la</button>
-          <button class="btn btn-warning btn-sm" onclick="confirm('${item.id}','talvez')" ${item.confirmado === 'talvez' ? 'disabled' : ''}>Talvez</button>
-          <button class="btn btn-danger btn-sm" onclick="confirm('${item.id}','recusado')" ${item.confirmado === 'recusado' ? 'disabled' : ''}>Nao posso</button>
+        <div class="confirm-buttons" style="flex-wrap:wrap;">
+          <button class="btn btn-success btn-sm" onclick="confirmar('${item.id}','confirmado')" ${item.confirmado === 'confirmado' ? 'disabled' : ''}>Vou estar la</button>
+          <button class="btn btn-warning btn-sm" onclick="confirmar('${item.id}','talvez')" ${item.confirmado === 'talvez' ? 'disabled' : ''}>Talvez</button>
+          <button class="btn btn-danger btn-sm" onclick="confirmar('${item.id}','recusado')" ${item.confirmado === 'recusado' ? 'disabled' : ''}>Não posso</button>
+          <button class="btn btn-sm btn-primary" onclick="openAddSong('${item.escala_id}')">+ Adicionar música</button>
         </div>
       ` : ''}
     </div>
@@ -64,7 +74,7 @@ function renderConfirmBadge(status) {
   return '<span class="badge">Pendente</span>';
 }
 
-window.confirm = async function (id, status) {
+window.confirmar = async function (id, status) {
   try {
     await API.post('/confirmations/' + id + '/confirmar', { status });
     location.reload();
@@ -72,3 +82,81 @@ window.confirm = async function (id, status) {
     alert('Erro: ' + err.message);
   }
 };
+
+window.openAddSong = async function (escalaId) {
+  try {
+    const [songs, schedule] = await Promise.all([
+      API.get('/songs'),
+      API.get('/schedules/' + escalaId)
+    ]);
+    allSongs = songs;
+    currentScheduleMusicas = schedule.musicas || [];
+    const available = songs.filter(s => !currentScheduleMusicas.some(m => m.musica_id === s.id));
+    if (available.length === 0) {
+      alert('Todas as músicas já foram adicionadas à esta escala.');
+      return;
+    }
+    const select = document.getElementById('song-select');
+    if (select) {
+      select.innerHTML = '<option value="">Selecione uma música...</option>' +
+        available.map(s => `<option value="${s.id}">${escapeHtml(s.titulo)}${s.artista ? ' - ' + escapeHtml(s.artista) : ''}</option>`).join('');
+    }
+    document.getElementById('add-song-escala-id').value = escalaId;
+    const ordem = (currentScheduleMusicas.length || 0) + 1;
+    document.getElementById('add-song-ordem').value = ordem;
+    openModal('modal-add-song');
+  } catch (err) {
+    alert('Erro: ' + err.message);
+  }
+};
+
+window.saveSongToSchedule = async function () {
+  const escalaId = document.getElementById('add-song-escala-id').value;
+  const musicaId = document.getElementById('song-select').value;
+  const ordem = document.getElementById('add-song-ordem').value;
+  if (!musicaId) {
+    alert('Selecione uma música.');
+    return;
+  }
+  try {
+    await API.post('/schedules/' + escalaId + '/musicas', { musica_id: musicaId, ordem: parseInt(ordem) || 1 });
+    closeModal('modal-add-song');
+    location.reload();
+  } catch (err) {
+    alert('Erro: ' + err.message);
+  }
+};
+
+window.removeSongFromSchedule = async function (escalaId, escalaMusicaId) {
+  if (!confirm('Remover esta música da escala?')) return;
+  try {
+    await API.del('/schedules/' + escalaId + '/musicas/' + escalaMusicaId);
+    location.reload();
+  } catch (err) {
+    alert('Erro: ' + err.message);
+  }
+};
+
+async function loadScheduleMusicas() {
+  const containers = document.querySelectorAll('[id^="musicas-"]');
+  for (const c of containers) {
+    const escalaId = c.id.replace('musicas-', '');
+    try {
+      const sc = await API.get('/schedules/' + escalaId);
+      if (!sc.musicas || sc.musicas.length === 0) {
+        c.innerHTML = '<p class="empty" style="margin:0.5rem 0;font-size:0.85rem;">Nenhuma música na escala ainda.</p>';
+      } else {
+        c.innerHTML = sc.musicas.map(m => `
+          <div class="schedule-musica-item">
+            <span><b>${m.ordem}.</b> ${escapeHtml(m.titulo || '?')}${m.artista ? ' <small>(' + escapeHtml(m.artista) + ')</small>' : ''}</span>
+            <button class="btn-icon" onclick="removeSongFromSchedule('${escalaId}','${m.id}')" title="Remover">&times;</button>
+          </div>
+        `).join('');
+      }
+    } catch (e) {
+      c.innerHTML = `<p class="empty">Erro: ${escapeHtml(e.message)}</p>`;
+    }
+  }
+}
+
+setTimeout(loadScheduleMusicas, 100);

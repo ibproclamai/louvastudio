@@ -4,6 +4,34 @@
   setupLogout();
   setupAdminVisibility(user);
 
+  const firstName = (user.nome || '').split(' ')[0] || user.nome;
+  const welcomeEl = document.getElementById('welcome-name');
+  if (welcomeEl) welcomeEl.textContent = firstName;
+
+  try {
+    const cfg = await API.get('/config');
+    if (!cfg.nome_igreja && user.perfil === 'admin') {
+      const banner = document.createElement('div');
+      banner.className = 'card';
+      banner.style.cssText = 'background:linear-gradient(135deg,#ec4899,#f59e0b);color:white;border:none;margin-bottom:1.5rem';
+      banner.innerHTML = `
+        <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap">
+          <div style="font-size:2.5rem">&#127968;</div>
+          <div style="flex:1;min-width:200px">
+            <h3 style="margin:0 0 0.25rem">Bem-vindo ao Louva.Studio!</h3>
+            <p style="margin:0;opacity:0.95">Cadastre os dados da sua igreja para começar.</p>
+          </div>
+          <a href="/igreja.html" class="btn" style="background:white;color:#ec4899">Cadastrar Igreja</a>
+        </div>
+      `;
+      const main = document.querySelector('main.container') || document.querySelector('main');
+      if (main && !document.getElementById('church-banner')) {
+        banner.id = 'church-banner';
+        main.insertBefore(banner, main.firstChild);
+      }
+    }
+  } catch (e) { console.error(e); }
+
   try {
     const [members, songs, schedules] = await Promise.all([
       API.get('/members'),
@@ -48,7 +76,7 @@ function renderScheduleItem(s, compact = false) {
       </div>
       <div class="schedule-info">
         <h3>${escapeHtml(s.tipo_culto || 'Culto')}</h3>
-        <p>${s.membros.length} membro(s) &middot; ${s.musicas.length} musica(s) ${s.local ? '&middot; ' + escapeHtml(s.local) : ''}</p>
+        <p>${s.membros.length} membro(s) &middot; ${s.músicas.length} música(s) ${s.local ? '&middot; ' + escapeHtml(s.local) : ''}</p>
       </div>
       <div class="schedule-actions">
         <a href="/schedules.html" class="btn btn-sm">Ver</a>

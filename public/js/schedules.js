@@ -72,7 +72,7 @@ function renderSchedules() {
           </div>
           <div class="schedule-info">
             <h3>${escapeHtml(s.tipo_culto || 'Culto')} <span class="status-badge status-${status}">${status === 'publicada' ? 'Publicada' : 'Rascunho'}</span></h3>
-            <p>${s.local ? escapeHtml(s.local) + ' &middot; ' : ''}${s.membros.length} membro(s) (${confirmed} confirmado(s)) &middot; ${s.musicas.length} musica(s)</p>
+            <p>${s.local ? escapeHtml(s.local) + ' &middot; ' : ''}${s.membros.length} membro(s) (${confirmed} confirmado(s)) &middot; ${s.músicas.length} música(s)</p>
           </div>
           <div class="schedule-actions">
             ${isAdmin ? `<button class="btn btn-sm" onclick="editSchedule('${s.id}')">Editar</button>
@@ -83,11 +83,11 @@ function renderSchedules() {
         </div>
         <div class="schedule-detail">
           ${s.membros.length > 0 ? `<h4>Membros</h4><ul>${s.membros.map(m =>
-            `<li>${escapeHtml(m.membro_nome || '?')} ${m.membro_funcao ? '<small>(' + escapeHtml(m.membro_funcao) + ')</small>' : ''}
-             ${m.funcao_na_escala ? ' &mdash; ' + escapeHtml(m.funcao_na_escala) : ''}
+            `<li>${escapeHtml(m.membro_nome || '?')} ${m.membro_função ? '<small>(' + escapeHtml(m.membro_função) + ')</small>' : ''}
+             ${m.função_na_escala ? ' &mdash; ' + escapeHtml(m.função_na_escala) : ''}
              ${renderConfirmBadge(m.confirmado)}</li>`).join('')}</ul>` : ''}
-          ${s.musicas.length > 0 ? `<h4>Musicas</h4><ul>${s.musicas.map(mu =>
-            `<li>${mu.ordem}. ${escapeHtml(mu.titulo || '?')} ${mu.artista ? '<small>- ' + escapeHtml(mu.artista) + '</small>' : ''}
+          ${s.músicas.length > 0 ? `<h4>Músicas</h4><ul>${s.músicas.map(mu =>
+            `<li>${mu.ordem}. ${escapeHtml(mu.título || '?')} ${mu.artista ? '<small>- ' + escapeHtml(mu.artista) + '</small>' : ''}
              ${mu.tom ? '<span class="badge badge-primary">' + escapeHtml(mu.tom) + '</span>' : ''}
              ${mu.vs ? '<span class="badge badge-' + escapeHtml(mu.vs.tipo) + '">VS: ' + escapeHtml(mu.vs.nome) + '</span>' : ''}
              ${mu.vs && mu.vs.tipo === 'multitrack' ? `<a class="btn btn-sm btn-primary" style="margin-left:0.4rem" href="/multitrack.html?vs=${encodeURIComponent(mu.vs.id)}&schedule=${encodeURIComponent(s.id)}" target="_blank">&#9654; Tocar Multitrack</a>` : ''}</li>`).join('')}</ul>` : ''}
@@ -115,17 +115,17 @@ window.editSchedule = async function (id) {
   form.data_culto.value = s.data_culto;
   form.tipo_culto.value = s.tipo_culto || '';
   form.local.value = s.local || '';
-  form.observacoes.value = s.observacoes || '';
+  form.observações.value = s.observações || '';
   const statusSel = form.elements['status'];
   if (statusSel) statusSel.value = s.status || 'rascunho';
 
   selectedMembers.length = 0;
   s.membros.forEach(m => selectedMembers.push({
     membro_id: m.membro_id,
-    funcao_na_escala: m.funcao_na_escala || m.membro_funcao || ''
+    função_na_escala: m.função_na_escala || m.membro_função || ''
   }));
   selectedSongs.length = 0;
-  s.musicas.forEach(mu => selectedSongs.push({ musica_id: mu.musica_id, ordem: Number(mu.ordem), vs_id: mu.vs_id || '' }));
+  s.músicas.forEach(mu => selectedSongs.push({ música_id: mu.música_id, ordem: Number(mu.ordem), vs_id: mu.vs_id || '' }));
 
   renderMemberPicker();
   renderSongPicker();
@@ -155,7 +155,7 @@ function renderMemberPicker() {
     return `
       <div class="checkbox-item">
         <strong>${escapeHtml(m ? m.nome : '?')}</strong>
-        <input type="text" placeholder="Funcao na escala" value="${escapeHtml(sm.funcao_na_escala || '')}"
+        <input type="text" placeholder="Função na escala" value="${escapeHtml(sm.função_na_escala || '')}"
           onchange="updateMemberRole(${idx}, this.value)">
         <span class="remove" onclick="removeMemberFromSchedule(${idx})">&#10005;</span>
       </div>
@@ -166,18 +166,18 @@ function renderMemberPicker() {
 function renderSongPicker() {
   const c = document.getElementById('schedule-songs');
   if (selectedSongs.length === 0) {
-    c.innerHTML = '<p class="empty">Nenhuma musica adicionada.</p>';
+    c.innerHTML = '<p class="empty">Nenhuma música adicionada.</p>';
     return;
   }
   c.innerHTML = selectedSongs
     .sort((a, b) => a.ordem - b.ordem)
     .map((ss, idx) => {
-      const s = allSongs.find(ss2 => ss2.id === ss.musica_id);
+      const s = allSongs.find(ss2 => ss2.id === ss.música_id);
       const vsList = (s && s.vs_list) || [];
       const currentVS = vsList.find(v => v.id === ss.vs_id);
       return `
         <div class="song-pick-item" style="flex-wrap:wrap">
-          <span><b>${ss.ordem}.</b> ${escapeHtml(s ? s.titulo : '?')} ${s && s.tom ? '<span class="badge badge-primary">' + escapeHtml(s.tom) + '</span>' : ''}</span>
+          <span><b>${ss.ordem}.</b> ${escapeHtml(s ? s.título : '?')} ${s && s.tom ? '<span class="badge badge-primary">' + escapeHtml(s.tom) + '</span>' : ''}</span>
           ${vsList.length > 0 ? `<select onchange="updateSongVS(${idx}, this.value)" style="margin-left:auto;padding:0.3rem;font-size:0.85rem">
             <option value="">Sem VS</option>
             ${vsList.map(v => `<option value="${v.id}" ${currentVS && currentVS.id === v.id ? 'selected' : ''}>VS: ${escapeHtml(v.nome)} (${escapeHtml(v.tipo)})</option>`).join('')}
@@ -190,14 +190,14 @@ function renderSongPicker() {
 
 window.addMemberToSchedule = function () {
   const available = allMembers.filter(m => !selectedMembers.find(sm => sm.membro_id === m.id));
-  if (available.length === 0) { alert('Todos os membros ja foram adicionados.'); return; }
+  if (available.length === 0) { alert('Todos os membros já foram adicionados.'); return; }
   const select = document.createElement('select');
   select.innerHTML = '<option value="">Selecione um membro...</option>' +
-    available.map(m => `<option value="${m.id}">${escapeHtml(m.nome)} ${m.funcao ? '(' + escapeHtml(m.funcao) + ')' : ''}</option>`).join('');
+    available.map(m => `<option value="${m.id}">${escapeHtml(m.nome)} ${m.função ? '(' + escapeHtml(m.função) + ')' : ''}</option>`).join('');
   select.onchange = () => {
     if (select.value) {
       const m = allMembers.find(mm => mm.id === select.value);
-      selectedMembers.push({ membro_id: select.value, funcao_na_escala: m.funcao || '' });
+      selectedMembers.push({ membro_id: select.value, função_na_escala: m.função || '' });
       renderMemberPicker();
     }
   };
@@ -210,15 +210,15 @@ window.addMemberToSchedule = function () {
 };
 
 window.addSongToSchedule = function () {
-  const available = allSongs.filter(s => !selectedSongs.find(ss => ss.musica_id === s.id));
-  if (available.length === 0) { alert('Todas as musicas ja foram adicionadas.'); return; }
+  const available = allSongs.filter(s => !selectedSongs.find(ss => ss.música_id === s.id));
+  if (available.length === 0) { alert('Todas as músicas já foram adicionadas.'); return; }
   const select = document.createElement('select');
-  select.innerHTML = '<option value="">Selecione uma musica...</option>' +
-    available.map(s => `<option value="${s.id}">${escapeHtml(s.titulo)} ${s.artista ? '- ' + escapeHtml(s.artista) : ''}</option>`).join('');
+  select.innerHTML = '<option value="">Selecione uma música...</option>' +
+    available.map(s => `<option value="${s.id}">${escapeHtml(s.título)} ${s.artista ? '- ' + escapeHtml(s.artista) : ''}</option>`).join('');
   select.onchange = () => {
     if (select.value) {
       const ordem = selectedSongs.length === 0 ? 1 : Math.max(...selectedSongs.map(s => s.ordem)) + 1;
-      selectedSongs.push({ musica_id: select.value, ordem, vs_id: '' });
+      selectedSongs.push({ música_id: select.value, ordem, vs_id: '' });
       renderSongPicker();
     }
   };
@@ -231,7 +231,7 @@ window.addSongToSchedule = function () {
 };
 
 window.updateMemberRole = function (idx, value) {
-  if (selectedMembers[idx]) selectedMembers[idx].funcao_na_escala = value;
+  if (selectedMembers[idx]) selectedMembers[idx].função_na_escala = value;
 };
 
 window.updateSongVS = function (idx, vsId) {
@@ -257,10 +257,10 @@ async function saveSchedule(e) {
     data_culto: form.data_culto.value,
     tipo_culto: form.tipo_culto.value,
     local: form.local.value,
-    observacoes: form.observacoes.value,
+    observações: form.observações.value,
     status: statusVal,
-    membros: selectedMembers.map(m => ({ membro_id: m.membro_id, funcao_na_escala: m.funcao_na_escala })),
-    musicas: selectedSongs.map(s => ({ musica_id: s.musica_id, ordem: s.ordem, vs_id: s.vs_id || '' }))
+    membros: selectedMembers.map(m => ({ membro_id: m.membro_id, função_na_escala: m.função_na_escala })),
+    músicas: selectedSongs.map(s => ({ música_id: s.música_id, ordem: s.ordem, vs_id: s.vs_id || '' }))
   };
   try {
     if (id) await API.put('/schedules/' + id, body);
@@ -314,10 +314,10 @@ window.printSchedule = async function (id) {
         .footer { margin-top: 2rem; text-align: center; color: #636e72; font-size: 0.85rem; font-style: italic; }
         .vs { color: #6c5ce7; font-size: 0.85rem; margin-left: 0.5rem; }
         .badge { display: inline-block; padding: 0.15rem 0.5rem; border-radius: 12px; font-size: 0.75rem; background: #e0d4f5; color: #6c5ce7; margin-left: 0.25rem; }
-        @media print { body { padding: 0.5rem; } .no-print { display: none; } }
+        @média print { body { padding: 0.5rem; } .no-print { display: none; } }
       </style></head><body>
       <div class="no-print" style="text-align:right;margin-bottom:1rem"><button onclick="window.print()" style="padding:0.5rem 1rem;background:#6c5ce7;color:white;border:none;border-radius:4px;cursor:pointer">Imprimir</button></div>
-      <h1>${escapeHtml(config.nome_igreja || 'Ministerio de Louvor')}</h1>
+      <h1>${escapeHtml(config.nome_igreja || 'Ministério de Louvor')}</h1>
       <div class="meta">${config.endereco ? escapeHtml(config.endereco) : ''}${config.cidade ? ' - ' + escapeHtml(config.cidade) : ''}</div>
       <h2>${escapeHtml(schedule.tipo_culto || 'Culto')}</h2>
       <div class="info-grid">
@@ -326,17 +326,17 @@ window.printSchedule = async function (id) {
         <div><b>Status:</b> ${schedule.status === 'publicada' ? 'Publicada' : 'Rascunho'}</div>
         <div><b>Lider de Louvor:</b> ${escapeHtml(config.louvor_responsavel || '-')}</div>
       </div>
-      ${schedule.observacoes ? '<p><b>Observacoes:</b> ' + escapeHtml(schedule.observacoes) + '</p>' : ''}
+      ${schedule.observações ? '<p><b>Observações:</b> ' + escapeHtml(schedule.observações) + '</p>' : ''}
       <h2>Equipe</h2>
       <ul>${schedule.membros.map(m => '<li>' + escapeHtml(m.membro_nome || '?') +
-        (m.membro_funcao ? ' <small>(' + escapeHtml(m.membro_funcao) + ')</small>' : '') +
-        (m.funcao_na_escala ? ' - <b>' + escapeHtml(m.funcao_na_escala) + '</b>' : '') + '</li>').join('')}</ul>
-      <h2>Repertorio</h2>
-      <ul>${schedule.musicas.map(mu => '<li><b>' + mu.ordem + '.</b> ' + escapeHtml(mu.titulo || '?') +
+        (m.membro_função ? ' <small>(' + escapeHtml(m.membro_função) + ')</small>' : '') +
+        (m.função_na_escala ? ' - <b>' + escapeHtml(m.função_na_escala) + '</b>' : '') + '</li>').join('')}</ul>
+      <h2>Repertório</h2>
+      <ul>${schedule.músicas.map(mu => '<li><b>' + mu.ordem + '.</b> ' + escapeHtml(mu.título || '?') +
         (mu.artista ? ' <small>(' + escapeHtml(mu.artista) + ')</small>' : '') +
         (mu.tom ? '<span class="badge">Tom: ' + escapeHtml(mu.tom) + '</span>' : '') +
         (mu.vs ? '<span class="vs">VS: ' + escapeHtml(mu.vs.nome) + '</span>' : '') + '</li>').join('')}</ul>
-      <div class="footer">${escapeHtml(config.mensagem_rodape || 'Que o louvor seja para a gloria de Deus!')}</div>
+      <div class="footer">${escapeHtml(config.mensagem_rodape || 'Que o louvor seja para a glória de Deus!')}</div>
       </body></html>`;
 
     const w = window.open('', '_blank');

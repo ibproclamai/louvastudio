@@ -1,13 +1,10 @@
 let charts = {};
 
 (async function () {
-  const user = await loadUser();
+  const user = await requireRole('admin');
   if (!user) return;
-  if (user.perfil !== 'admin') {
-    document.querySelector('main').innerHTML = '<p class="empty">Acesso restrito a administradores.</p>';
-    return;
-  }
   setupLogout();
+  setupRoleVisibility(user);
   document.getElementById('btn-refresh').addEventListener('click', loadAll);
   await loadAll();
 })();
@@ -39,7 +36,7 @@ async function loadAll() {
 
 function renderKPIs(o) {
   document.getElementById('kpi-membros').textContent = o.membros;
-  document.getElementById('kpi-musicas').textContent = o.musicas;
+  document.getElementById('kpi-músicas').textContent = o.músicas;
   document.getElementById('kpi-escalas').textContent = `${o.escalasPublicadas}/${o.escalas}`;
   document.getElementById('kpi-taxa').textContent = o.confirmacoes.taxa + '%';
 }
@@ -117,7 +114,7 @@ function renderTopSongsChart(data) {
   charts.topSongs = new Chart(document.getElementById('chart-top-songs'), {
     type: 'bar',
     data: {
-      labels: data.map(d => d.titulo.length > 25 ? d.titulo.substring(0, 22) + '...' : d.titulo),
+      labels: data.map(d => d.título.length > 25 ? d.título.substring(0, 22) + '...' : d.título),
       datasets: [{
         label: 'Vezes tocada',
         data: data.map(d => d.count),
@@ -141,7 +138,7 @@ function renderFunctionsChart(data) {
   charts.functions = new Chart(document.getElementById('chart-functions'), {
     type: 'pie',
     data: {
-      labels: data.map(d => d.funcao),
+      labels: data.map(d => d.função),
       datasets: [{
         data: data.map(d => d.count),
         backgroundColor: PALETTE,
@@ -160,13 +157,13 @@ function renderFunctionsChart(data) {
 function renderTopSongsTable(data) {
   const tbody = document.querySelector('#table-top-songs tbody');
   if (data.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="5" class="empty">Nenhuma musica escalada ainda.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="5" class="empty">Nenhuma música escalada ainda.</td></tr>';
     return;
   }
   tbody.innerHTML = data.map((s, i) => `
     <tr>
       <td>${i + 1}</td>
-      <td><strong>${escapeHtml(s.titulo)}</strong></td>
+      <td><strong>${escapeHtml(s.título)}</strong></td>
       <td>${escapeHtml(s.artista || '-')}</td>
       <td>${s.tom ? `<span class="badge badge-primary">${escapeHtml(s.tom)}</span>` : '-'}</td>
       <td><strong>${s.count}x</strong></td>
@@ -184,7 +181,7 @@ function renderTopMembersTable(data) {
     <tr>
       <td>${i + 1}</td>
       <td><strong>${escapeHtml(m.nome)}</strong></td>
-      <td>${escapeHtml(m.funcao || '-')}</td>
+      <td>${escapeHtml(m.função || '-')}</td>
       <td>${m.count}</td>
       <td>${m.confirmados}</td>
       <td>
@@ -200,7 +197,7 @@ function renderTopMembersTable(data) {
 function renderPendingTable(data) {
   const tbody = document.querySelector('#table-pending tbody');
   if (data.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="4" class="empty" style="color: var(--success);">&#9989; Nenhuma confirmacao pendente!</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="4" class="empty" style="color: var(--success);">&#9989; Nenhuma confirmação pendente!</td></tr>';
     return;
   }
   tbody.innerHTML = data.slice(0, 20).map(p => {
@@ -211,7 +208,7 @@ function renderPendingTable(data) {
         <td>${dataFmt}</td>
         <td>${escapeHtml(p.escala_tipo || 'Culto')}</td>
         <td><strong>${escapeHtml(p.membro_nome)}</strong></td>
-        <td>${escapeHtml(p.funcao || '-')}</td>
+        <td>${escapeHtml(p.função || '-')}</td>
       </tr>
     `;
   }).join('') + (data.length > 20 ? `<tr><td colspan="4" class="empty">+ ${data.length - 20} mais...</td></tr>` : '');

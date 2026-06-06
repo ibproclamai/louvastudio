@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Musicas - Louva.Studio</title>
+  <title>Músicas - Louva.Studio</title>
   <meta name="theme-color" content="#6366f1">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -22,14 +22,15 @@
     <div class="nav-menu" id="nav-menu">
       <ul class="nav-links">
         <li><a href="/dashboard.html">Inicio</a></li>
-        <li><a href="/members.html">Membros</a></li>
-        <li><a href="/songs.html" class="active">Musicas</a></li>
+        <li><a href="/songs.html" class="active">Músicas</a></li>
         <li><a href="/schedules.html">Escalas</a></li>
         <li><a href="/my-schedule.html">Minhas Escalas</a></li>
-        <li class="admin-only hidden"><a href="/studio.html">Estudio</a></li>
         <li><a href="/eventos.html">Eventos</a></li>
         <li><a href="/chat.html">Chat</a></li>
-        <li class="admin-only"><a href="/relatorios.html">Relatorios</a></li>
+        <li class="admin-only hidden"><a href="/igreja.html">Igreja</a></li>
+        <li class="admin-only hidden"><a href="/members.html">Membros</a></li>
+        <li class="admin-only hidden"><a href="/relatórios.html">Relatórios</a></li>
+        <li data-requires-role="membro" class="member-only"><a href="/studio.html">Estúdio</a></li>
       </ul>
       <div class="nav-user">
         <span id="user-name" class="user-chip"></span>
@@ -41,12 +42,12 @@
 
   <main class="container">
     <div class="page-header">
-      <h1>Repertorio de musicas</h1>
-      <button id="btn-new-song" class="btn btn-primary admin-only hidden">+ Nova musica</button>
+      <h1>Repertório de músicas</h1>
+      <button id="btn-new-song" class="btn btn-primary" data-admin-only>+ Nova música</button>
     </div>
 
     <div class="filters">
-      <input type="text" id="search-song" placeholder="Buscar por titulo ou artista...">
+      <input type="text" id="search-song" placeholder="Buscar por título ou artista...">
     </div>
 
     <div id="songs-list" class="card-grid">
@@ -57,13 +58,13 @@
   <div id="modal-song" class="modal hidden">
     <div class="modal-content">
       <div class="modal-header">
-        <h2 id="modal-title">Nova musica</h2>
+        <h2 id="modal-title">Nova música</h2>
         <button class="modal-close" data-close>&times;</button>
       </div>
       <form id="form-song" class="form">
         <input type="hidden" name="id">
-        <label>Titulo *
-          <input type="text" name="titulo" required>
+        <label>Título *
+          <input type="text" name="título" required>
         </label>
         <label>Artista / Banda
           <input type="text" name="artista">
@@ -78,7 +79,7 @@
         </div>
         <div class="field-with-upload">
           <label>Link da cifra
-            <input type="url" name="cifra_url" id="cifra-url" placeholder="https://... ou faca upload">
+            <input type="url" name="cifra_url" id="cifra-url" placeholder="https://... ou faça upload">
           </label>
           <div id="upload-cifra-zone"></div>
         </div>
@@ -87,8 +88,8 @@
             <input type="url" name="video_url" id="video-url" placeholder="https://... ou cole link do YouTube">
           </label>
         </div>
-        <label>Observacoes
-          <textarea name="observacoes" rows="2"></textarea>
+        <label>Observações
+          <textarea name="observações" rows="2"></textarea>
         </label>
         <div class="form-actions">
           <button type="button" class="btn" data-close>Cancelar</button>

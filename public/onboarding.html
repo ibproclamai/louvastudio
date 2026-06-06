@@ -50,7 +50,7 @@
     .intro-card p { color: var(--text-muted); margin: 0 0 1.5rem; }
     .intro-card ul { text-align: left; max-width: 400px; margin: 0 auto 1.5rem; }
     .intro-card li { padding: 0.4rem 0; }
-    @media (max-width: 600px) {
+    @média (max-width: 600px) {
       .tour-tooltip { left: 1rem !important; right: 1rem !important; width: auto !important; }
     }
   </style>
@@ -60,11 +60,11 @@
     <div class="setup-card intro-card" id="intro">
       <div style="font-size:4rem;background:var(--gradient-primary);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;">&#9835;</div>
       <h1>Bem-vindo ao Louva.Studio!</h1>
-      <p>Vamos fazer um tour rapido de 5 passos para voce dominar o sistema em menos de 5 minutos.</p>
+      <p>Vamos fazer um tour rápido de 5 passos para você dominar o sistema em menos de 5 minutos.</p>
       <ul>
         <li>&#9989; Entender o que cada secao faz</li>
         <li>&#9989; Cadastrar seu primeiro membro</li>
-        <li>&#9989; Adicionar uma musica</li>
+        <li>&#9989; Adicionar uma música</li>
         <li>&#9989; Montar uma escala de teste</li>
         <li>&#9989; Publicar e compartilhar</li>
       </ul>
@@ -83,22 +83,22 @@
   <script>
     const steps = [
       {
-        title: 'Membros do Ministerio',
+        title: 'Membros do Ministério',
         icon: '&#128101;',
         target: 'a[href="/members.html"]',
-        text: 'Aqui voce cadastra todos os membros do ministerio. Cada um tem funcao (vocalista, guitarrista, etc), telefone e disponibilidade. Vamos comecar adicionando o primeiro!'
+        text: 'Aqui você cadastra todos os membros do ministério. Cada um tem função (vocalista, guitarrista, etc), telefone e disponibilidade. Vamos começar adicionando o primeiro!'
       },
       {
-        title: 'Catalogo de Musicas',
+        title: 'Catálogo de Músicas',
         icon: '&#127911;',
         target: 'a[href="/songs.html"]',
-        text: 'O catalogo de musicas do repertorio. Cada uma pode ter tom, BPM, links de cifra/video, e varios VS (playbacks, stems, metronomos). Membros acessam pelo celular.'
+        text: 'O catálogo de músicas do repertório. Cada uma pode ter tom, BPM, links de cifra/video, e varios VS (playbacks, stems, metronomos). Membros acessam pelo celular.'
       },
       {
         title: 'Escalas de Culto',
         icon: '&#128197;',
         target: 'a[href="/schedules.html"]',
-        text: 'Aqui voce monta as escalas. Crie uma escala, adicione os membros e as musicas, e publique. Os membros recebem e confirmam participacao.'
+        text: 'Aqui você monta as escalas. Crie uma escala, adicione os membros e as músicas, e publique. Os membros recebem e confirmam participacao.'
       },
       {
         title: 'Minhas Escalas',
@@ -107,9 +107,9 @@
         text: 'Os membros vem aqui para ver as escalas que estao participando. Eles confirmam ou recusam com um clique. Simples assim.'
       },
       {
-        title: 'Estudio (Admin)',
+        title: 'Estúdio (Admin)',
         icon: '&#9881;',
-        text: 'O Estudio e o painel de administracao. Aqui voce gerencia usuarios, configuracoes da igreja e catalogo de VS. Visivel apenas para admins.'
+        text: 'O Estúdio é o painel de administração. Aqui você gerencia usuários, configurações da igreja e catálogo de VS. Visível apenas para admins.'
       }
     ];
 
@@ -145,7 +145,7 @@
           <span class="tour-counter">${currentStep + 1} de ${steps.length}</span>
           <div style="display:flex;gap:0.4rem;">
             <button class="btn btn-sm btn-secondary" id="tour-prev">${currentStep === 0 ? 'Sair' : 'Anterior'}</button>
-            <button class="btn btn-sm btn-primary" id="tour-next">${currentStep === steps.length - 1 ? 'Concluir' : 'Proximo'}</button>
+            <button class="btn btn-sm btn-primary" id="tour-next">${currentStep === steps.length - 1 ? 'Concluir' : 'Próximo'}</button>
           </div>
         </div>
       `;

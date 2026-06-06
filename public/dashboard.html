@@ -22,14 +22,15 @@
     <div class="nav-menu" id="nav-menu">
       <ul class="nav-links">
         <li><a href="/dashboard.html" class="active">Inicio</a></li>
-        <li><a href="/members.html">Membros</a></li>
-        <li><a href="/songs.html">Musicas</a></li>
+        <li><a href="/songs.html">Músicas</a></li>
         <li><a href="/schedules.html">Escalas</a></li>
         <li><a href="/my-schedule.html">Minhas Escalas</a></li>
         <li><a href="/eventos.html">Eventos</a></li>
         <li><a href="/chat.html">Chat</a></li>
-        <li class="admin-only hidden"><a href="/studio.html">Estudio</a></li>
-        <li class="admin-only hidden"><a href="/relatorios.html">Relatorios</a></li>
+        <li class="admin-only hidden"><a href="/igreja.html">Igreja</a></li>
+        <li class="admin-only hidden"><a href="/members.html">Membros</a></li>
+        <li class="admin-only hidden"><a href="/relatórios.html">Relatórios</a></li>
+        <li data-requires-role="membro" class="member-only"><a href="/studio.html">Estúdio</a></li>
       </ul>
       <div class="nav-user">
         <span id="user-name" class="user-chip"></span>
@@ -41,14 +42,14 @@
 
   <main class="container">
     <h1>Bem-vindo, <span id="welcome-name"></span>!</h1>
-    <p class="subtitle">Gestao do Ministerio de Louvor</p>
+    <p class="subtitle">Gestão do Ministério de Louvor</p>
 
     <div class="card" id="tour-card" style="display:none;margin-bottom:1.5rem;background:var(--gradient-primary);color:white;border:none;">
       <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap;">
         <div style="font-size:2.5rem;">&#128640;</div>
         <div style="flex:1;min-width:200px;">
           <h3 style="margin:0 0 0.25rem;">Primeira vez aqui?</h3>
-          <p style="margin:0;opacity:0.9;">Faca um tour guiado de 5 passos em menos de 5 minutos.</p>
+          <p style="margin:0;opacity:0.9;">Faça um tour guiado de 5 passos em menos de 5 minutos.</p>
         </div>
         <a href="/onboarding.html" class="btn" style="background:white;color:var(--primary);">Iniciar Tour</a>
         <button class="btn" id="btn-dismiss-tour" style="background:transparent;color:white;border:1px solid rgba(255,255,255,0.4);">&times;</button>
@@ -67,7 +68,7 @@
         <div class="stat-icon">&#127911;</div>
         <div class="stat-info">
           <div class="stat-value" id="stat-songs">-</div>
-          <div class="stat-label">Musicas no repertorio</div>
+          <div class="stat-label">Músicas no repertório</div>
         </div>
       </div>
       <div class="stat-card">
@@ -81,13 +82,13 @@
         <div class="stat-icon">&#9989;</div>
         <div class="stat-info">
           <div class="stat-value" id="stat-pending">-</div>
-          <div class="stat-label">Confirmacoes pendentes</div>
+          <div class="stat-label">Confirmações pendentes</div>
         </div>
       </div>
     </div>
 
     <section class="section">
-      <h2>Proximas escalas</h2>
+      <h2>Próximas escalas</h2>
       <div id="next-schedules" class="schedule-list">
         <p class="empty">Carregando...</p>
       </div>

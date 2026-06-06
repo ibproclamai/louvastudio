@@ -2,10 +2,11 @@ let allMembers = [];
 let currentUser = null;
 
 (async function () {
-  currentUser = await loadUser();
+  currentUser = await requireRole('admin');
   if (!currentUser) return;
   setupLogout();
   setupAdminVisibility(currentUser);
+  setupRoleVisibility(currentUser);
 
   document.getElementById('btn-new-member').addEventListener('click', () => openMemberForm());
   document.getElementById('form-member').addEventListener('submit', saveMember);
@@ -26,7 +27,7 @@ async function loadMembers() {
 function renderMembers() {
   const q = (document.getElementById('search-member').value || '').toLowerCase();
   const filtered = allMembers.filter(m =>
-    !q || (m.nome || '').toLowerCase().includes(q) || (m.funcao || '').toLowerCase().includes(q)
+    !q || (m.nome || '').toLowerCase().includes(q) || (m.função || '').toLowerCase().includes(q)
   );
 
   const container = document.getElementById('members-list');
@@ -35,11 +36,11 @@ function renderMembers() {
     return;
   }
 
-  const isAdmin = currentUser && currentUser.perfil === 'admin';
+  const canEdit = currentUser;
   container.innerHTML = filtered.map(m => `
     <div class="card">
       <div class="card-title">${escapeHtml(m.nome)}</div>
-      <div class="card-meta">${m.funcao ? '<span class="badge badge-primary">' + escapeHtml(m.funcao) + '</span>' : ''}
+      <div class="card-meta">${m.função ? '<span class="badge badge-primary">' + escapeHtml(m.função) + '</span>' : ''}
         ${m.ativo === 'true' ? '<span class="badge badge-success">Ativo</span>' : '<span class="badge badge-danger">Inativo</span>'}
       </div>
       <div class="card-body">
@@ -47,7 +48,7 @@ function renderMembers() {
         ${m.email ? '&#9993; ' + escapeHtml(m.email) + '<br>' : ''}
         ${m.disponibilidade ? '<small><b>Disponibilidade:</b> ' + escapeHtml(m.disponibilidade) + '</small>' : ''}
       </div>
-      ${isAdmin ? `
+      ${canEdit ? `
         <div class="card-actions">
           <button class="btn btn-sm" onclick="openMemberForm('${m.id}')">Editar</button>
           <button class="btn btn-sm btn-danger" onclick="deleteMember('${m.id}')">Excluir</button>
@@ -65,7 +66,7 @@ window.openMemberForm = function (id) {
     const m = allMembers.find(x => x.id === id);
     if (m) {
       form.nome.value = m.nome || '';
-      form.funcao.value = m.funcao || '';
+      form.função.value = m.função || '';
       form.telefone.value = m.telefone || '';
       form.email.value = m.email || '';
       form.disponibilidade.value = m.disponibilidade || '';
@@ -82,7 +83,7 @@ async function saveMember(e) {
   const id = form.id.value;
   const body = {
     nome: form.nome.value.trim(),
-    funcao: form.funcao.value,
+    função: form.função.value,
     telefone: form.telefone.value.trim(),
     email: form.email.value.trim(),
     disponibilidade: form.disponibilidade.value.trim(),

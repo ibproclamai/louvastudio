@@ -16,6 +16,26 @@ function rowsToObjects(rows) {
   });
 }
 
+async function isMemberOfSchedule(userId, scheduleId) {
+  const rows = await sheets.readSheet('Usuarios');
+  const users = rowsToObjects(rows);
+  const user = users.find(u => u.id === userId);
+  if (!user) return false;
+  const memberRows = await sheets.readSheet('Membros');
+  const members = rowsToObjects(memberRows);
+  const member = members.find(m => (m.email || '').toLowerCase() === (user.email || '').toLowerCase() || m.nome === user.nome);
+  if (!member) return false;
+  const emRows = await sheets.readSheet('EscalaMembros');
+  const em = rowsToObjects(emRows);
+  return em.some(x => x.escala_id === scheduleId && x.membro_id === member.id);
+}
+
+async function scheduleMemberGuard(req, res, next) {
+  if (req.user.perfil === 'admin') return next();
+  if (await isMemberOfSchedule(req.user.id, req.params.id)) return next();
+  return res.status(403).json({ error: 'Voce precisa estar escalado nesta escala para modificar as musicas' });
+}
+
 async function buildScheduleWithRelations(escala) {
   const [emRows, songsRows, esRows, membersRows, vsRows] = await Promise.all([
     sheets.readSheet('EscalaMembros'),
@@ -108,7 +128,7 @@ router.get('/:id', authRequired, async (req, res, next) => {
   } catch (e) { next(e); }
 });
 
-router.post('/', authRequired, async (req, res, next) => {
+router.post('/', authRequired, adminRequired, async (req, res, next) => {
   try {
     const { data_culto, tipo_culto, local, observacoes, status, membros, musicas } = req.body;
     if (!data_culto) return res.status(400).json({ error: 'data_culto eh obrigatorio' });
@@ -137,7 +157,7 @@ router.post('/', authRequired, async (req, res, next) => {
   } catch (e) { next(e); }
 });
 
-router.put('/:id', authRequired, async (req, res, next) => {
+router.put('/:id', authRequired, adminRequired, async (req, res, next) => {
   try {
     const { id } = req.params;
     const rows = await sheets.readSheet('Escalas');
@@ -207,7 +227,7 @@ router.put('/:id', authRequired, async (req, res, next) => {
   } catch (e) { next(e); }
 });
 
-router.delete('/:id', authRequired, async (req, res, next) => {
+router.delete('/:id', authRequired, adminRequired, async (req, res, next) => {
   try {
     const { id } = req.params;
     const rows = await sheets.readSheet('Escalas');
@@ -227,7 +247,7 @@ router.delete('/:id', authRequired, async (req, res, next) => {
   } catch (e) { next(e); }
 });
 
-router.post('/:id/membros', authRequired, async (req, res, next) => {
+router.post('/:id/membros', authRequired, adminRequired, async (req, res, next) => {
   try {
     const { id } = req.params;
     const { membro_id, funcao_na_escala } = req.body;
@@ -238,7 +258,7 @@ router.post('/:id/membros', authRequired, async (req, res, next) => {
   } catch (e) { next(e); }
 });
 
-router.delete('/:id/membros/:escalaMembroId', authRequired, async (req, res, next) => {
+router.delete('/:id/membros/:escalaMembroId', authRequired, adminRequired, async (req, res, next) => {
   try {
     const { id, escalaMembroId } = req.params;
     const rows = await sheets.readSheet('EscalaMembros');
@@ -250,7 +270,7 @@ router.delete('/:id/membros/:escalaMembroId', authRequired, async (req, res, nex
   } catch (e) { next(e); }
 });
 
-router.post('/:id/musicas', authRequired, async (req, res, next) => {
+router.post('/:id/musicas', authRequired, scheduleMemberGuard, async (req, res, next) => {
   try {
     const { id } = req.params;
     const { musica_id, ordem, vs_id } = req.body;
@@ -261,7 +281,7 @@ router.post('/:id/musicas', authRequired, async (req, res, next) => {
   } catch (e) { next(e); }
 });
 
-router.delete('/:id/musicas/:escalaMusicaId', authRequired, async (req, res, next) => {
+router.delete('/:id/musicas/:escalaMusicaId', authRequired, scheduleMemberGuard, async (req, res, next) => {
   try {
     const { id, escalaMusicaId } = req.params;
     const rows = await sheets.readSheet('EscalaMusicas');
@@ -273,7 +293,7 @@ router.delete('/:id/musicas/:escalaMusicaId', authRequired, async (req, res, nex
   } catch (e) { next(e); }
 });
 
-router.post('/:id/publicar', authRequired, async (req, res, next) => {
+router.post('/:id/publicar', authRequired, adminRequired, async (req, res, next) => {
   try {
     const { id } = req.params;
     const { status, enviar_email } = req.body;
@@ -303,7 +323,7 @@ router.post('/:id/publicar', authRequired, async (req, res, next) => {
   } catch (e) { next(e); }
 });
 
-router.put('/:id/musicas/:escalaMusicaId/vs', authRequired, async (req, res, next) => {
+router.put('/:id/musicas/:escalaMusicaId/vs', authRequired, adminRequired, async (req, res, next) => {
   try {
     const { id, escalaMusicaId } = req.params;
     const { vs_id } = req.body;
