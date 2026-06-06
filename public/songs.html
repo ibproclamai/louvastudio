@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Musicas - Louva.Studio</title>
+  <meta name="theme-color" content="#6366f1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Louva.Studio">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" type="image/svg+xml" href="/icon.svg">
+  <link rel="apple-touch-icon" href="/icon.svg">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-brand">Louva.Studio</div>
+    <button class="nav-toggle" id="nav-toggle" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="nav-menu" id="nav-menu">
+      <ul class="nav-links">
+        <li><a href="/dashboard.html">Inicio</a></li>
+        <li><a href="/members.html">Membros</a></li>
+        <li><a href="/songs.html" class="active">Musicas</a></li>
+        <li><a href="/schedules.html">Escalas</a></li>
+        <li><a href="/my-schedule.html">Minhas Escalas</a></li>
+        <li class="admin-only hidden"><a href="/studio.html">Estudio</a></li>
+      </ul>
+      <div class="nav-user">
+        <span id="user-name" class="user-chip"></span>
+        <button id="btn-logout" class="btn btn-sm">Sair</button>
+      </div>
+    </div>
+  </nav>
+  <div id="nav-overlay" class="nav-overlay"></div>
+
+  <main class="container">
+    <div class="page-header">
+      <h1>Repertorio de musicas</h1>
+      <button id="btn-new-song" class="btn btn-primary admin-only hidden">+ Nova musica</button>
+    </div>
+
+    <div class="filters">
+      <input type="text" id="search-song" placeholder="Buscar por titulo ou artista...">
+    </div>
+
+    <div id="songs-list" class="card-grid">
+      <p class="empty">Carregando...</p>
+    </div>
+  </main>
+
+  <div id="modal-song" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modal-title">Nova musica</h2>
+        <button class="modal-close" data-close>&times;</button>
+      </div>
+      <form id="form-song" class="form">
+        <input type="hidden" name="id">
+        <label>Titulo *
+          <input type="text" name="titulo" required>
+        </label>
+        <label>Artista / Banda
+          <input type="text" name="artista">
+        </label>
+        <div class="form-row">
+          <label>Tom
+            <input type="text" name="tom" placeholder="Ex: G, Am, C">
+          </label>
+          <label>BPM
+            <input type="number" name="bpm" min="0">
+          </label>
+        </div>
+        <label>Link da cifra
+          <input type="url" name="cifra_url" placeholder="https://...">
+        </label>
+        <label>Link do video
+          <input type="url" name="video_url" placeholder="https://...">
+        </label>
+        <label>Observacoes
+          <textarea name="observacoes" rows="2"></textarea>
+        </label>
+        <div class="form-actions">
+          <button type="button" class="btn" data-close>Cancelar</button>
+          <button type="submit" class="btn btn-primary">Salvar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/songs.js"></script>
+</body>
+</html>

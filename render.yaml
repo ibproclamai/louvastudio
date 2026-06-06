@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: louva-studio
+    runtime: node
+    plan: free
+    branch: main
+    buildCommand: npm install
+    startCommand: node server.js
+    healthCheckPath: /api/setup/status
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: 20
+      - key: GOOGLE_SHEET_ID
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: GOOGLE_CREDENTIALS_JSON
+        sync: false

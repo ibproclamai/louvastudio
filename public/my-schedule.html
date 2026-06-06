@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Minhas Escalas - Louva.Studio</title>
+  <meta name="theme-color" content="#6366f1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Louva.Studio">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" type="image/svg+xml" href="/icon.svg">
+  <link rel="apple-touch-icon" href="/icon.svg">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-brand">Louva.Studio</div>
+    <button class="nav-toggle" id="nav-toggle" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="nav-menu" id="nav-menu">
+      <ul class="nav-links">
+        <li><a href="/dashboard.html">Inicio</a></li>
+        <li><a href="/members.html">Membros</a></li>
+        <li><a href="/songs.html">Musicas</a></li>
+        <li><a href="/schedules.html">Escalas</a></li>
+        <li><a href="/my-schedule.html" class="active">Minhas Escalas</a></li>
+        <li class="admin-only hidden"><a href="/studio.html">Estudio</a></li>
+      </ul>
+      <div class="nav-user">
+        <span id="user-name" class="user-chip"></span>
+        <button id="btn-logout" class="btn btn-sm">Sair</button>
+      </div>
+    </div>
+  </nav>
+  <div id="nav-overlay" class="nav-overlay"></div>
+
+  <main class="container">
+    <h1>Minhas escalas</h1>
+    <p class="subtitle">Confirme sua presenca nas escalas que voce foi convocado</p>
+
+    <div id="my-schedules" class="schedule-list">
+      <p class="empty">Carregando...</p>
+    </div>
+  </main>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/my-schedule.js"></script>
+</body>
+</html>

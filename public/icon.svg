@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6366f1"/>
+      <stop offset="50%" stop-color="#8b5cf6"/>
+      <stop offset="100%" stop-color="#ec4899"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8"/>
+    </filter>
+  </defs>
+  <rect width="512" height="512" rx="96" fill="url(#g)"/>
+  <g transform="translate(96, 76) scale(0.85)" fill="#ffffff" filter="url(#shadow)" opacity="0.25">
+    <path d="M250 40c-7 0-13 5-15 12l-92 28c-7 2-12 9-12 16v154c-12-6-26-10-42-10-32 0-58 18-58 40s26 40 58 40 58-18 58-40V144l80-24v108c-12-6-26-10-42-10-32 0-58 18-58 40s26 40 58 40 58-18 58-40V40c0-1 0-1 0-1 0-8-6-14-14-14-1 1-1 1-2 0 0 0 0 1 0 0z"/>
+  </g>
+  <g transform="translate(96, 76) scale(0.85)" fill="#ffffff">
+    <path d="M250 40c-7 0-13 5-15 12l-92 28c-7 2-12 9-12 16v154c-12-6-26-10-42-10-32 0-58 18-58 40s26 40 58 40 58-18 58-40V144l80-24v108c-12-6-26-10-42-10-32 0-58 18-58 40s26 40 58 40 58-18 58-40V40c0-1 0-1 0-1 0-8-6-14-14-14-1 1-1 1-2 0 0 0 0 1 0 0z"/>
+  </g>
+</svg>

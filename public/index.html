@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Louva.Studio - Ministerio de Louvor</title>
+  <meta name="theme-color" content="#6366f1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Louva.Studio">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" type="image/svg+xml" href="/icon.svg">
+  <link rel="apple-touch-icon" href="/icon.svg">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="auth-page">
+  <div class="auth-container">
+    <div class="auth-card">
+      <div class="brand">
+        <div class="brand-logo">&#9835;</div>
+        <h1>Louva.Studio</h1>
+        <p class="brand-subtitle">Gestao do Ministerio de Louvor</p>
+      </div>
+
+      <div id="alert" class="alert hidden"></div>
+
+      <div class="tabs">
+        <button class="tab active" data-tab="login">Entrar</button>
+        <button class="tab" data-tab="register">Cadastrar</button>
+      </div>
+
+      <form id="login-form" class="form active">
+        <label>Email
+          <input type="email" name="email" required placeholder="seu@email.com">
+        </label>
+        <label>Senha
+          <input type="password" name="senha" required placeholder="Sua senha">
+        </label>
+        <button type="submit" class="btn btn-primary btn-block">Entrar</button>
+      </form>
+
+      <form id="register-form" class="form">
+        <label>Nome completo
+          <input type="text" name="nome" required placeholder="Seu nome">
+        </label>
+        <label>Email
+          <input type="email" name="email" required placeholder="seu@email.com">
+        </label>
+        <label>Senha
+          <input type="password" name="senha" required minlength="6" placeholder="Minimo 6 caracteres">
+        </label>
+        <button type="submit" class="btn btn-primary btn-block">Criar conta</button>
+        <p class="hint">O primeiro usuario cadastrado sera administrador.</p>
+      </form>
+    </div>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/auth.js"></script>
+</body>
+</html>

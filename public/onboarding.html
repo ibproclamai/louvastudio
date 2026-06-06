@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <title>Primeiros Passos - Louva.Studio</title>
+  <meta name="theme-color" content="#6366f1">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" type="image/svg+xml" href="/icon.svg">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/setup.css">
+  <style>
+    .tour-overlay {
+      position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); z-index: 9998;
+      backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+      animation: fadeIn 0.3s var(--ease);
+    }
+    .tour-spotlight {
+      position: absolute; border-radius: 12px;
+      box-shadow: 0 0 0 9999px rgba(15, 23, 42, 0.7);
+      pointer-events: none;
+      transition: all 0.3s var(--ease-bounce);
+    }
+    .tour-tooltip {
+      position: fixed; z-index: 9999; max-width: 360px; width: calc(100% - 2rem);
+      background: var(--card-solid); backdrop-filter: blur(20px);
+      border: 1px solid var(--border-strong); border-radius: var(--radius-lg);
+      padding: 1.5rem; box-shadow: var(--shadow-lg);
+      animation: slideUp 0.4s var(--ease-bounce);
+    }
+    .tour-tooltip h3 {
+      margin: 0 0 0.5rem; font-size: 1.15rem;
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+    .tour-tooltip p { margin: 0 0 1rem; color: var(--text-muted); line-height: 1.5; }
+    .tour-progress {
+      display: flex; gap: 4px; margin-bottom: 1rem;
+    }
+    .tour-progress span {
+      flex: 1; height: 4px; border-radius: 2px; background: var(--bg-2);
+      transition: background 0.3s;
+    }
+    .tour-progress span.done { background: var(--primary); }
+    .tour-progress span.current { background: var(--accent); }
+    .tour-actions { display: flex; gap: 0.5rem; justify-content: space-between; }
+    .tour-counter { font-size: 0.85rem; color: var(--text-soft); align-self: center; }
+    .tour-icon { font-size: 1.5rem; }
+    .intro-card { max-width: 560px; margin: 0 auto; text-align: center; padding: 2rem 1.5rem; }
+    .intro-card h1 { font-size: 1.75rem; margin: 0.75rem 0 0.5rem; }
+    .intro-card p { color: var(--text-muted); margin: 0 0 1.5rem; }
+    .intro-card ul { text-align: left; max-width: 400px; margin: 0 auto 1.5rem; }
+    .intro-card li { padding: 0.4rem 0; }
+    @media (max-width: 600px) {
+      .tour-tooltip { left: 1rem !important; right: 1rem !important; width: auto !important; }
+    }
+  </style>
+</head>
+<body class="setup-page">
+  <div class="setup-container">
+    <div class="setup-card intro-card" id="intro">
+      <div style="font-size:4rem;background:var(--gradient-primary);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;">&#9835;</div>
+      <h1>Bem-vindo ao Louva.Studio!</h1>
+      <p>Vamos fazer um tour rapido de 5 passos para voce dominar o sistema em menos de 5 minutos.</p>
+      <ul>
+        <li>&#9989; Entender o que cada secao faz</li>
+        <li>&#9989; Cadastrar seu primeiro membro</li>
+        <li>&#9989; Adicionar uma musica</li>
+        <li>&#9989; Montar uma escala de teste</li>
+        <li>&#9989; Publicar e compartilhar</li>
+      </ul>
+      <div style="display:flex;gap:0.5rem;justify-content:center;flex-wrap:wrap;">
+        <button class="btn btn-primary" id="btn-start-tour">&#9654; Iniciar Tour Guiado</button>
+        <button class="btn btn-secondary" id="btn-skip-tour">Pular e explorar sozinho</button>
+      </div>
+      <div style="margin-top:1.5rem;padding-top:1.5rem;border-top:1px solid var(--border-strong);">
+        <p style="font-size:0.875rem;margin-bottom:0.75rem;">Quer ver um tutorial em video?</p>
+        <a href="/VIDEO-TUTORIAL.md" class="btn btn-sm btn-secondary" target="_blank">&#127909; Roteiro de Video Tutorial</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script>
+    const steps = [
+      {
+        title: 'Membros do Ministerio',
+        icon: '&#128101;',
+        target: 'a[href="/members.html"]',
+        text: 'Aqui voce cadastra todos os membros do ministerio. Cada um tem funcao (vocalista, guitarrista, etc), telefone e disponibilidade. Vamos comecar adicionando o primeiro!'
+      },
+      {
+        title: 'Catalogo de Musicas',
+        icon: '&#127911;',
+        target: 'a[href="/songs.html"]',
+        text: 'O catalogo de musicas do repertorio. Cada uma pode ter tom, BPM, links de cifra/video, e varios VS (playbacks, stems, metronomos). Membros acessam pelo celular.'
+      },
+      {
+        title: 'Escalas de Culto',
+        icon: '&#128197;',
+        target: 'a[href="/schedules.html"]',
+        text: 'Aqui voce monta as escalas. Crie uma escala, adicione os membros e as musicas, e publique. Os membros recebem e confirmam participacao.'
+      },
+      {
+        title: 'Minhas Escalas',
+        icon: '&#128203;',
+        target: 'a[href="/my-schedule.html"]',
+        text: 'Os membros vem aqui para ver as escalas que estao participando. Eles confirmam ou recusam com um clique. Simples assim.'
+      },
+      {
+        title: 'Estudio (Admin)',
+        icon: '&#9881;',
+        text: 'O Estudio e o painel de administracao. Aqui voce gerencia usuarios, configuracoes da igreja e catalogo de VS. Visivel apenas para admins.'
+      }
+    ];
+
+    let currentStep = -1;
+    let tooltip, overlay, spotlight;
+
+    function startTour() {
+      document.getElementById('intro').style.display = 'none';
+      overlay = document.createElement('div');
+      overlay.className = 'tour-overlay';
+      document.body.appendChild(overlay);
+      currentStep = 0;
+      showStep();
+    }
+
+    function showStep() {
+      const s = steps[currentStep];
+      if (tooltip) tooltip.remove();
+      if (spotlight) spotlight.remove();
+
+      tooltip = document.createElement('div');
+      tooltip.className = 'tour-tooltip';
+      let progress = '';
+      steps.forEach((_, i) => {
+        const cls = i < currentStep ? 'done' : i === currentStep ? 'current' : '';
+        progress += `<span class="${cls}"></span>`;
+      });
+      tooltip.innerHTML = `
+        <div class="tour-progress">${progress}</div>
+        <h3><span class="tour-icon">${s.icon}</span> ${s.title}</h3>
+        <p>${s.text}</p>
+        <div class="tour-actions">
+          <span class="tour-counter">${currentStep + 1} de ${steps.length}</span>
+          <div style="display:flex;gap:0.4rem;">
+            <button class="btn btn-sm btn-secondary" id="tour-prev">${currentStep === 0 ? 'Sair' : 'Anterior'}</button>
+            <button class="btn btn-sm btn-primary" id="tour-next">${currentStep === steps.length - 1 ? 'Concluir' : 'Proximo'}</button>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(tooltip);
+
+      const target = s.target ? document.querySelector(s.target) : null;
+      if (target) {
+        const rect = target.getBoundingClientRect();
+        spotlight = document.createElement('div');
+        spotlight.className = 'tour-spotlight';
+        spotlight.style.top = (rect.top - 6) + 'px';
+        spotlight.style.left = (rect.left - 6) + 'px';
+        spotlight.style.width = (rect.width + 12) + 'px';
+        spotlight.style.height = (rect.height + 12) + 'px';
+        document.body.appendChild(spotlight);
+
+        const tooltipRect = tooltip.getBoundingClientRect();
+        const spaceBelow = window.innerHeight - rect.bottom;
+        if (spaceBelow > 280) {
+          tooltip.style.top = (rect.bottom + 12) + 'px';
+          tooltip.style.left = Math.max(8, Math.min(window.innerWidth - 368, rect.left)) + 'px';
+        } else {
+          tooltip.style.bottom = (window.innerHeight - rect.top + 12) + 'px';
+          tooltip.style.left = '1rem';
+        }
+        target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      } else {
+        tooltip.style.top = '50%';
+        tooltip.style.left = '50%';
+        tooltip.style.transform = 'translate(-50%, -50%)';
+      }
+
+      document.getElementById('tour-prev').onclick = () => {
+        if (currentStep === 0) endTour();
+        else { currentStep--; showStep(); }
+      };
+      document.getElementById('tour-next').onclick = () => {
+        if (currentStep === steps.length - 1) {
+          endTour();
+          setTimeout(() => location.href = '/members.html', 500);
+        } else { currentStep++; showStep(); }
+      };
+    }
+
+    function endTour() {
+      if (tooltip) tooltip.remove();
+      if (spotlight) spotlight.remove();
+      if (overlay) overlay.remove();
+      localStorage.setItem('louva.tourDone', '1');
+    }
+
+    document.getElementById('btn-start-tour').onclick = startTour;
+    document.getElementById('btn-skip-tour').onclick = () => {
+      localStorage.setItem('louva.tourDone', '1');
+      location.href = '/dashboard.html';
+    };
+
+    if (localStorage.getItem('louva.tourDone')) {
+      document.getElementById('btn-skip-tour').textContent = 'Voltar ao Dashboard';
+      document.getElementById('btn-skip-tour').onclick = () => location.href = '/dashboard.html';
+    }
+  </script>
+</body>
+</html>

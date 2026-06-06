@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Membros - Louva.Studio</title>
+  <meta name="theme-color" content="#6366f1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Louva.Studio">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" type="image/svg+xml" href="/icon.svg">
+  <link rel="apple-touch-icon" href="/icon.svg">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-brand">Louva.Studio</div>
+    <button class="nav-toggle" id="nav-toggle" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="nav-menu" id="nav-menu">
+      <ul class="nav-links">
+        <li><a href="/dashboard.html">Inicio</a></li>
+        <li><a href="/members.html" class="active">Membros</a></li>
+        <li><a href="/songs.html">Musicas</a></li>
+        <li><a href="/schedules.html">Escalas</a></li>
+        <li><a href="/my-schedule.html">Minhas Escalas</a></li>
+        <li class="admin-only hidden"><a href="/studio.html">Estudio</a></li>
+      </ul>
+      <div class="nav-user">
+        <span id="user-name" class="user-chip"></span>
+        <button id="btn-logout" class="btn btn-sm">Sair</button>
+      </div>
+    </div>
+  </nav>
+  <div id="nav-overlay" class="nav-overlay"></div>
+
+  <main class="container">
+    <div class="page-header">
+      <h1>Membros da equipe</h1>
+      <button id="btn-new-member" class="btn btn-primary admin-only hidden">+ Novo membro</button>
+    </div>
+
+    <div class="filters">
+      <input type="text" id="search-member" placeholder="Buscar por nome ou funcao...">
+    </div>
+
+    <div id="members-list" class="card-grid">
+      <p class="empty">Carregando...</p>
+    </div>
+  </main>
+
+  <div id="modal-member" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modal-title">Novo membro</h2>
+        <button class="modal-close" data-close>&times;</button>
+      </div>
+      <form id="form-member" class="form">
+        <input type="hidden" name="id">
+        <label>Nome *
+          <input type="text" name="nome" required>
+        </label>
+        <label>Funcao
+          <select name="funcao">
+            <option value="">Selecione...</option>
+            <option>Vocal</option>
+            <option>Violao</option>
+            <option>Guitarra</option>
+            <option>Baixo</option>
+            <option>Bateria</option>
+            <option>Teclado</option>
+            <option>Violino</option>
+            <option>Cajon</option>
+            <option>Backing Vocal</option>
+            <option>Som</option>
+            <option>Outro</option>
+          </select>
+        </label>
+        <label>Telefone
+          <input type="text" name="telefone" placeholder="(00) 00000-0000">
+        </label>
+        <label>Email
+          <input type="email" name="email">
+        </label>
+        <label>Disponibilidade
+          <textarea name="disponibilidade" rows="2" placeholder="Ex: Domingos manha, quartas..."></textarea>
+        </label>
+        <label class="checkbox">
+          <input type="checkbox" name="ativo" checked> Ativo
+        </label>
+        <div class="form-actions">
+          <button type="button" class="btn" data-close>Cancelar</button>
+          <button type="submit" class="btn btn-primary">Salvar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/members.js"></script>
+</body>
+</html>

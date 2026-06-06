@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Escalas - Louva.Studio</title>
+  <meta name="theme-color" content="#6366f1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Louva.Studio">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" type="image/svg+xml" href="/icon.svg">
+  <link rel="apple-touch-icon" href="/icon.svg">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-brand">Louva.Studio</div>
+    <button class="nav-toggle" id="nav-toggle" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="nav-menu" id="nav-menu">
+      <ul class="nav-links">
+        <li><a href="/dashboard.html">Inicio</a></li>
+        <li><a href="/members.html">Membros</a></li>
+        <li><a href="/songs.html">Musicas</a></li>
+        <li><a href="/schedules.html" class="active">Escalas</a></li>
+        <li><a href="/my-schedule.html">Minhas Escalas</a></li>
+        <li class="admin-only hidden"><a href="/studio.html">Estudio</a></li>
+      </ul>
+      <div class="nav-user">
+        <span id="user-name" class="user-chip"></span>
+        <button id="btn-logout" class="btn btn-sm">Sair</button>
+      </div>
+    </div>
+  </nav>
+  <div id="nav-overlay" class="nav-overlay"></div>
+
+  <main class="container">
+    <div class="page-header">
+      <h1>Escalas de cultos</h1>
+      <div style="display:flex;gap:0.5rem;flex-wrap:wrap">
+        <button id="btn-new-schedule" class="btn btn-primary admin-only hidden">+ Nova escala</button>
+      </div>
+    </div>
+
+    <div class="filters">
+      <label style="display:flex;align-items:center;gap:0.5rem;max-width:none">
+        Filtrar:
+        <select id="filter-status" style="max-width:200px">
+          <option value="">Todas</option>
+          <option value="rascunho">Rascunhos</option>
+          <option value="publicada">Publicadas</option>
+        </select>
+      </label>
+    </div>
+
+    <div id="schedules-list" class="schedule-list">
+      <p class="empty">Carregando...</p>
+    </div>
+  </main>
+
+  <div id="modal-schedule" class="modal hidden">
+    <div class="modal-content modal-large">
+      <div class="modal-header">
+        <h2 id="modal-title">Nova escala</h2>
+        <button class="modal-close" data-close>&times;</button>
+      </div>
+      <form id="form-schedule" class="form">
+        <input type="hidden" name="id">
+        <div class="form-row">
+          <label>Data do culto *
+            <input type="date" name="data_culto" required>
+          </label>
+          <label>Tipo
+            <select name="tipo_culto">
+              <option value="">Selecione...</option>
+              <option>Culto Dominical - Manha</option>
+              <option>Culto Dominical - Noite</option>
+              <option>Culto de Oracao</option>
+              <option>Culto de Jovens</option>
+              <option>Culto de Criancas</option>
+              <option>Ensaio</option>
+              <option>Evento Especial</option>
+              <option>Outro</option>
+            </select>
+          </label>
+        </div>
+        <div class="form-row">
+          <label>Local
+            <input type="text" name="local" placeholder="Templo principal, salao...">
+          </label>
+          <label>Status
+            <select name="status">
+              <option value="rascunho">Rascunho</option>
+              <option value="publicada">Publicada</option>
+            </select>
+          </label>
+        </div>
+        <label>Observacoes
+          <textarea name="observacoes" rows="2"></textarea>
+        </label>
+
+        <fieldset>
+          <legend>Membros escalados</legend>
+          <div id="schedule-members" class="checkbox-list">
+            <p class="empty">Carregando membros...</p>
+          </div>
+          <button type="button" id="btn-add-member" class="btn btn-sm">+ Adicionar membro</button>
+        </fieldset>
+
+        <fieldset>
+          <legend>Musicas da escala</legend>
+          <div id="schedule-songs" class="song-picker">
+            <p class="empty">Carregando musicas...</p>
+          </div>
+          <button type="button" id="btn-add-song" class="btn btn-sm">+ Adicionar musica</button>
+        </fieldset>
+
+        <div class="form-actions">
+          <button type="button" class="btn" data-close>Cancelar</button>
+          <button type="submit" class="btn btn-primary">Salvar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/schedules.js"></script>
+</body>
+</html>

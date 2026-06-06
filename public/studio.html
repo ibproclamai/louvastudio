@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Estudio - Louva.Studio</title>
+  <meta name="theme-color" content="#6366f1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Louva.Studio">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" type="image/svg+xml" href="/icon.svg">
+  <link rel="apple-touch-icon" href="/icon.svg">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/studio.css">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-brand">Louva.Studio</div>
+    <button class="nav-toggle" id="nav-toggle" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="nav-menu" id="nav-menu">
+      <ul class="nav-links">
+        <li><a href="/dashboard.html">Inicio</a></li>
+        <li><a href="/members.html">Membros</a></li>
+        <li><a href="/songs.html">Musicas</a></li>
+        <li><a href="/schedules.html">Escalas</a></li>
+        <li><a href="/my-schedule.html">Minhas Escalas</a></li>
+        <li class="admin-only hidden"><a href="/studio.html" class="active">Estudio</a></li>
+      </ul>
+      <div class="nav-user">
+        <span id="user-name" class="user-chip"></span>
+        <button id="btn-logout" class="btn btn-sm">Sair</button>
+      </div>
+    </div>
+  </nav>
+  <div id="nav-overlay" class="nav-overlay"></div>
+
+  <main class="container">
+    <div class="page-header">
+      <h1>Estudio</h1>
+      <span class="badge badge-primary">Admin</span>
+    </div>
+    <p class="subtitle">Gerencie Virtual Sound (VS), configuracoes da igreja e usuarios.</p>
+
+    <div class="studio-tabs">
+      <button class="studio-tab active" data-stab="vs">Virtual Sound (VS)</button>
+      <button class="studio-tab" data-stab="config">Configuracoes da Igreja</button>
+      <button class="studio-tab" data-stab="users">Usuarios</button>
+    </div>
+
+    <section id="panel-vs" class="studio-panel">
+      <div class="page-header">
+        <h2>Trilhas de Virtual Sound</h2>
+        <button id="btn-new-vs" class="btn btn-primary">+ Nova trilha VS</button>
+      </div>
+
+      <div class="filters filters-row">
+        <input type="text" id="search-vs" placeholder="Buscar por nome...">
+        <select id="filter-vs-song">
+          <option value="">Todas as musicas</option>
+        </select>
+        <select id="filter-vs-tipo">
+          <option value="">Todos os tipos</option>
+          <option value="playback">Playback completo</option>
+          <option value="stem">Stem (instrumento isolado)</option>
+          <option value="metronomo">Metronomo</option>
+          <option value="click">Click / Guia</option>
+          <option value="ensaio">Ensaio</option>
+          <option value="guia">Guia vocal</option>
+          <option value="outro">Outro</option>
+        </select>
+      </div>
+
+      <div id="vs-list" class="card-grid">
+        <p class="empty">Carregando...</p>
+      </div>
+    </section>
+
+    <section id="panel-config" class="studio-panel hidden">
+      <div class="page-header">
+        <h2>Configuracoes da Igreja</h2>
+      </div>
+      <form id="form-config" class="form config-form">
+        <div class="form-row">
+          <label>Nome da igreja
+            <input type="text" name="nome_igreja">
+          </label>
+          <label>Cidade
+            <input type="text" name="cidade">
+          </label>
+        </div>
+        <label>Endereco
+          <input type="text" name="endereco">
+        </label>
+        <div class="form-row">
+          <label>Pastor
+            <input type="text" name="pastor">
+          </label>
+          <label>Lider de Louvor
+            <input type="text" name="louvor_responsavel">
+          </label>
+        </div>
+        <div class="form-row">
+          <label>Telefone de contato
+            <input type="text" name="contato">
+          </label>
+          <label>WhatsApp
+            <input type="text" name="whatsapp">
+          </label>
+        </div>
+        <label>Site
+          <input type="url" name="site" placeholder="https://...">
+        </label>
+        <label>URL do logo
+          <input type="url" name="logo_url" placeholder="https://...">
+        </label>
+        <label>Versiculo do dia (opcional)
+          <textarea name="versiculo" rows="2"></textarea>
+        </label>
+        <label>Mensagem do rodape das escalas
+          <textarea name="mensagem_rodape" rows="2"></textarea>
+        </label>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Salvar configuracoes</button>
+        </div>
+      </form>
+    </section>
+
+    <section id="panel-users" class="studio-panel hidden">
+      <div class="page-header">
+        <h2>Usuarios do sistema</h2>
+      </div>
+      <div id="users-list" class="card-grid">
+        <p class="empty">Carregando...</p>
+      </div>
+    </section>
+  </main>
+
+  <div id="modal-vs" class="modal hidden">
+    <div class="modal-content modal-large">
+      <div class="modal-header">
+        <h2 id="modal-vs-title">Nova trilha VS</h2>
+        <button class="modal-close" data-close>&times;</button>
+      </div>
+      <form id="form-vs" class="form">
+        <input type="hidden" name="id">
+        <label>Musica *
+          <select name="musica_id" required>
+            <option value="">Selecione a musica...</option>
+          </select>
+        </label>
+        <label>Nome da trilha *
+          <input type="text" name="nome" required placeholder="Ex: Playback original, Stem de bateria...">
+        </label>
+        <label>Tipo
+          <select name="tipo">
+            <option value="playback">Playback completo</option>
+            <option value="stem">Stem (instrumento isolado)</option>
+            <option value="metronomo">Metronomo</option>
+            <option value="click">Click / Guia</option>
+            <option value="ensaio">Ensaio</option>
+            <option value="guia">Guia vocal</option>
+            <option value="outro">Outro</option>
+          </select>
+        </label>
+        <label>URL do audio *
+          <input type="url" name="url" required placeholder="https://drive.google.com/... ou link direto .mp3">
+        </label>
+        <div class="form-row">
+          <label>Tom (se diferente)
+            <input type="text" name="tom" placeholder="Ex: G, Am">
+          </label>
+          <label>BPM (se diferente)
+            <input type="number" name="bpm" min="0">
+          </label>
+        </div>
+        <label>Descricao / observacoes
+          <textarea name="descricao" rows="2" placeholder="Ex: backing track oficial, sem guia vocal..."></textarea>
+        </label>
+        <div class="form-actions">
+          <button type="button" class="btn" data-close>Cancelar</button>
+          <button type="submit" class="btn btn-primary">Salvar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/studio.js"></script>
+</body>
+</html>
